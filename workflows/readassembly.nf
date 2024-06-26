@@ -407,7 +407,7 @@ workflow GENOMEASSEMBLY {
         .set { polished_assemblies_and_no_polish }    
 
     if ( params.medaka_polish == true || params.racon_polish == true || params.shortread == true) {
-        if ( params.shortread == true && params.longread == true && params.PacBioHifi_lr == true) {
+        if ( params.shortread == true && params.longread == true ) {
             if(params.PacBioHifi_lr == true){
                 QC_2 (polished_assemblies, ch_PacBiolongreads, ch_summtxt, QC_1.out[3], QC_1.out[4], QC_1.out[5], READ_QC2.out[0], QC_1.out[2], full_size, QC_1.out[7], no_meta_ch_PB)
             } else {
