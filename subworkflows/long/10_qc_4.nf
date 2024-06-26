@@ -29,7 +29,12 @@ workflow QC_4 {
 
     if ( params.shortread == true ) {
         BWAMEM2_INDEX(assemblies)
-        BWAMEM2_MEM(shortreads, BWAMEM2_INDEX.out.index, params.samtools_sort)
+
+        shortreads
+            .concat(BWAMEM2_INDEX.out.index)
+            .set{bwa}
+
+        BWAMEM2_MEM(bwa, params.samtools_sort)
     }
 
     if ( params.longread == true ){
