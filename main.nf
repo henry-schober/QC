@@ -47,13 +47,13 @@ WorkflowMain.initialise(workflow, params, log)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { GENOMEASSEMBLY } from './workflows/readassembly'
+include { GENOMEASSEMBLY as GA } from './workflows/readassembly'
 
 //
 // WORKFLOW: Run main genomeassembly analysis pipeline
 //
-workflow GENASSEMBLYCOMPLETE {
-    GENOMEASSEMBLY ()
+workflow MAIN {
+    GA ()
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -66,7 +66,7 @@ workflow GENASSEMBLYCOMPLETE {
 // See: https://github.com/nf-core/rnaseq/issues/619
 //
 workflow {
-    GENASSEMBLYCOMPLETE ()
+    MAIN ()
 }
 
 /*
