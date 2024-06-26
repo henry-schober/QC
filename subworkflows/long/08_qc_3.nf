@@ -31,7 +31,7 @@ workflow QC_3 {
         BWAMEM2_INDEX(assemblies)
 
         shortreads
-            .concat(BWAMEM2_INDEX.out.index)
+            .combine(BWAMEM2_INDEX.out.index)
             .set{bwa}
 
         BWAMEM2_MEM(bwa, params.samtools_sort)
