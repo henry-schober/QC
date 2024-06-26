@@ -26,9 +26,9 @@ process BIOAWK {
     bioawk \\
         $args \\
         $input \\
-        > length_filt_${prefix}
+        > lf_${prefix}
 
-    gzip length_filt_${prefix}
+    gzip lf_${prefix}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
