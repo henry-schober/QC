@@ -47,6 +47,9 @@ workflow READ_QC2 {
             }
 
             filt_shortreads = KRAKEN2_KRAKEN2_SR.out.unclassified_reads_fastq   
+
+            //qc decontaminated short reads
+            FASTQC_3(KRAKEN2_KRAKEN2_SR.out.unclassified_reads_fastq)
     
         } else {
             filt_shortreads = FASTP.out.reads
@@ -55,9 +58,6 @@ workflow READ_QC2 {
         filt_shortreads
             .map { it[1] }
             .set { filt_sr_no_meta }
-
-        //qc decontaminated short reads
-        FASTQC_3(filt_shortreads)
 
         //unzip decontam short reads
         GUNZIP(filt_shortreads)
