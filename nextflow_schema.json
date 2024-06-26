@@ -11,6 +11,10 @@
             "description": "Define what kind of input data the pipeline should expect and where to find it.",
             "default": "",
             "properties": {
+                "tar": {
+                    "type": "boolean",
+                    "description": "Boolean whether long reads are in a tar archive for storage purposes"
+                },
                 "longread": {
                     "type": "boolean",
                     "default": true,
@@ -24,19 +28,15 @@
                     "type": "boolean",
                     "description": "Boolean whether long reads are ultra long Oxford Nanopore (will be used for Hifiasm if PacBio is available)"
                 },
-                "PacBioHifi_lr": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Boolean whether long reads are PacBio Hifi"
-                },
-                "tar": {
-                    "type": "boolean",
-                    "description": "Boolean whether long reads are in a tar archive for storage purposes"
-                },
                 "summary_txt_file": {
                     "type": "boolean",
                     "default": true,
                     "description": "Boolean whether a sequencing summary text file is available"
+                },
+                "PacBioHifi_lr": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Boolean whether long reads are PacBio Hifi"
                 },
                 "shortread": {
                     "type": "boolean",
@@ -54,6 +54,16 @@
             "type": "object",
             "default": "",
             "properties": {
+                "centrifuge_ont": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Boolean to decontaminate ONT reads with Centrifuge"
+                },
+                "kraken_pb": {
+                    "type": "boolean",
+                    "description": "Boolean to decontaminate HiFi reads with Kraken2",
+                    "default": true
+                },
                 "min_readlength": {
                     "type": "integer",
                     "default": 0,
@@ -79,6 +89,11 @@
             "type": "object",
             "default": "",
             "properties": {
+                "kraken_ill": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Boolean to decontaminate short reads with Kraken2"
+                },
                 "length_cutoff": {
                     "type": "integer",
                     "default": 45,
@@ -223,10 +238,6 @@
                 "high": {
                     "type": "integer",
                     "description": "High threshold of purge histogram, must be inputted after histogram is generated to reduce erroneous duplication with purge"
-                },
-                "gencov": {
-                    "type": "string",
-                    "description": "Path to purge histogram, must be inputted after histogram is generated to reduce erroneous duplication with purge"
                 }
             }
         },
