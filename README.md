@@ -167,7 +167,8 @@ All of the output from the programs run in the pipeline pipeline will be located
 ├── PIPELINE INFO
     └── execution_trace_*.txt
 ```
-
+Some output files have labels such as "dc", indicating that the reads have been decontaminated, or  "lf", indicating that reads have been length filtered.  
+  
 Information about interpreting output is located in the [output](docs/output.md) section.
 
 ## Credits
