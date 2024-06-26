@@ -1,4 +1,4 @@
-process SEQKIT_GREP {
+process SEQKIT_SEQ {
     tag "$meta.id"
     label 'process_low'
 
