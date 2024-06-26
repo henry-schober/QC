@@ -28,7 +28,7 @@ process SEQKIT_GREP {
     awk NF=1 contaminated_reads.txt > contaminated_read_ids.txt
     sort -u contaminated_read_ids.txt > no_dup_centrifuge_contaminated_read_ids.txt
 
-    seqkit grep -v -f no_dup_centrifuge_contaminated_read_ids.txt $longreads > ${prefix}_filtered.fastq
+    seqkit grep -v -f no_dup_centrifuge_contaminated_read_ids.txt $longreads > dc_${prefix}.fastq
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
