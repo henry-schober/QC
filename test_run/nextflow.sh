@@ -12,5 +12,5 @@
 
 module load nextflow
 
-nextflow pull emilytrybulec/genomeassembly
-nextflow run genomeassembly -params-file params.yaml -c my_config,mantis_config -profile singularity -r main -resume
+nextflow pull emilytrybulec/argonaut
+nextflow run emilytrybulec/argonaut -params-file params.yaml -c my_config,mantis_config -profile singularity -r main -resume
