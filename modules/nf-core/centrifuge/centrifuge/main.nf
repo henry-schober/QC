@@ -27,7 +27,7 @@ process CENTRIFUGE_CENTRIFUGE {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "filtered_${meta.id}"
+    def prefix = task.ext.prefix ?: "dc_${meta.id}"
     def paired = meta.single_end ? "-U ${reads}" :  "-1 ${reads[0]} -2 ${reads[1]}"
     def unaligned = ''
     def aligned = ''
