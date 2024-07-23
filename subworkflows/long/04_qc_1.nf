@@ -69,7 +69,8 @@ workflow QC_1 {
         } else {racon = Channel.empty()
                 ch_index = Channel.empty()
                 ch_align_bam = Channel.empty()
-                ch_align_paf = Channel.empty()}
+                ch_align_paf = Channel.empty()
+                ch_sam = Channel.empty()}
 
         // run quast
         QUAST(
