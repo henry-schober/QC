@@ -66,7 +66,10 @@ workflow QC_1 {
             .join(ch_sam)
             .set{racon} 
  
-        } else {racon = Channel.empty() }
+        } else {racon = Channel.empty()
+                ch_index = Channel.empty()
+                ch_align_bam = Channel.empty()
+                ch_align_paf = Channel.empty()}
 
         // run quast
         QUAST(
@@ -114,9 +117,9 @@ workflow QC_1 {
         ch_merqury = MERQURY.out.assembly_qv
 
     emit:
-        MINIMAP2_INDEX.out.index
-        MINIMAP2_ALIGN.out.bam
-        MINIMAP2_ALIGN.out.paf
+        ch_index 
+        ch_align_bam
+        ch_align_paf
         ch_quast
         ch_busco
         ch_merqury
