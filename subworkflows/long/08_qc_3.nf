@@ -50,6 +50,10 @@ workflow QC_3 {
         // align reads
         MINIMAP2_ALIGN(align_ch, params.bam_format, params.cigar_paf_format, params.cigar_bam)
         ch_bam = MINIMAP2_ALIGN.out.bam }
+    else {
+        ch_index = Channel.empty() 
+        ch_bam = Channel.empty() 
+    }
         
         // run quast
         QUAST(
