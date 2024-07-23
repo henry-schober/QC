@@ -114,9 +114,9 @@ workflow QC_1 {
         ch_merqury = MERQURY.out.assembly_qv
 
     emit:
-        ch_index
-        ch_align_bam
-        ch_align_paf
+        MINIMAP2_INDEX.out.index
+        MINIMAP2_ALIGN.out.bam
+        MINIMAP2_ALIGN.out.paf
         ch_quast
         ch_busco
         ch_merqury
