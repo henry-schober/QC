@@ -57,6 +57,12 @@ workflow QC_2 {
         ch_align_paf
             .concat(MINIMAP2_ALIGN.out.paf)
             .set { paf_alignment } }
+
+    else {
+        ch_index = Channel.empty()
+        ch_bam = Channel.empty()
+        paf_alignment = Channel.empty()}   
+    }
         
         // run quast
         QUAST(
