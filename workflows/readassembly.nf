@@ -551,6 +551,19 @@ workflow GENOMEASSEMBLY {
             .map { file -> tuple(id: file.baseName, file)  }
             .set{ch_all_assemblies}
 
+    } else if (params.longread == false && params.shortread == true) {
+        bam_4 = Channel.empty()
+
+        sr_assemblies
+            .concat(no_meta_lr_purge, no_meta_sr_purge, medaka_racon_polish, sr_polish)
+            .flatten()
+            .map { file -> tuple(id: file.baseName, file)  }
+            .set{ch_all_assemblies}
+
+        all_assemblies
+            .concat(polished_assemblies, purged_assemblies_common)
+            .collect() 
+            .set {final_assemblies}
     } else {
         bam_4 = Channel.empty()
 
