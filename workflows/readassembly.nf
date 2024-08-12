@@ -515,7 +515,14 @@ workflow GENOMEASSEMBLY {
         qc_merqury = QC_3.out[3]} 
 
         ch_reference = Channel.fromPath(params.ragtag_reference)
-        SCAFFOLD (purged_assemblies_common, ch_reference)
+
+        ASSEMBLY.out[5]
+            .concat(no_meta_lr_purge, no_meta_sr_purge, medaka_racon_polish, sr_polish, masurca_asm, redundans_asm)
+            .flatten()
+            .map { file -> tuple(id: file.baseName, file)  }
+            .set{ch_all_assemblies}
+
+        SCAFFOLD (ch_all_assemblies, ch_reference)
     ch_versions = ch_versions.mix(SCAFFOLD.out.versions)
 
         final_assemblies = SCAFFOLD.out[0]
