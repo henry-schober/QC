@@ -17,7 +17,7 @@ process EXTRACT_LR {
     tail -3 $gce2log | awk '{print \$5}' > scientificSize.txt
     less scientificSize.txt | awk -F"E" 'BEGIN{OFMT="%10.10f"} {print \$1 * (10 ^ \$2)}' > standardSize.txt 
     
-    head -1 standardSize.txt | awk '{printf("%d\n",\$0+=\$0<0?-0.5:0.5)}' > standardSizeFinal.txt
+    head -1 standardSize.txt | awk '{printf("%d\\n",\$0+=\$0<0?-0.5:0.5)}' > standardSizeFinal.txt
     
     head -1 standardSizeFinal.txt | numfmt --to=si > shortenedSizeFinal.txt
     """
