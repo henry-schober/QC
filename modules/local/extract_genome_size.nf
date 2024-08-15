@@ -18,7 +18,7 @@ process EXTRACT_LR {
     less scientificSize.txt | awk -F"E" 'BEGIN{OFMT="%10.10f"} {print \$1 * (10 ^ \$2)}' > standardSize.txt 
     
     head -1 standardSize.txt > mid_size.txt
-    sed 's:\\.[^|]*::g' mid_size.txt > standardSizeFinal.txt
+    sed 's:\.[^|]*::g' mid_size.txt > standardSizeFinal.txt
     
     head -1 standardSizeFinal.txt | numfmt --to=si > shortenedSizeFinal.txt
     """
