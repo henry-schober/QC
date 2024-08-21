@@ -1,118 +1,157 @@
-# nf-core/genomeassembly: Usage
-
-## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/genomeassembly/usage](https://nf-co.re/genomeassembly/usage)
+# emilytrybulec/argonaut: Usage
 
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
 
 ## Introduction
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
+To get started running Argonaut, four main files are recommended: [samplesheet.csv](#Samplesheet-input), [params.yaml](#Parameters), [my_config](#Configurations), and [nextflow.sh](#Running-the-pipeline)
 
 ## Samplesheet input
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use the input parameter to specify its location in params.yaml. The samplesheet has to be a comma-separated file (.csv) with 3 columns, and a header row. More detail about creating the samplesheets for your specific type of input is located [below](#Using-long-and-short-reads).
 
-```bash
---input '[path to samplesheet file]'
+### Using long and short reads
+
+The `sample` identifiers are important for naming throughout the pipeline, and we recommend that specific sample names are used, indicating read type. The pipeline requires concatenated raw reads before performing any downstream analysis. For best results, please provide the entire path to the reads.
+Below is an example samplesheet for long reads:
+
+`ont_samplesheet.csv`:
+
+```csv
+sample,fastq_1,fastq_2,single_end
+maca_jans_ont,SRR11191910.fastq.gz,,TRUE
 ```
 
-### Multiple runs of the same sample
+If more than one read input type is available, prepare a second (and third) samplesheet with your other input data as follows:
 
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
+`illumina_samplesheet.csv`:
 
-```console
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
+```csv
+sample,fastq_1,fastq_2,single_end
+maca_jans_ill,SRR11191912_1.fastq.gz,SRR11191912_2.fastq.gz,FALSE
 ```
 
-### Full samplesheet
+`pb_hifi_samplesheet.csv`:
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
-
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
-
-```console
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+```csv
+sample,fastq_1,fastq_2,single_end
+maca_jans_pb,SRR11191909.fastq.gz,,TRUE
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+!!! PLEASE ADD "ont", "pb", AND/OR "ill" TO YOUR SAMPLES NAMES !!!   
+Flye and canu will automatically detect your read type based on your samplesheet sample names. Please ensure that your fastq files have read type indicators (ont, pb, or ill).
+
+|   `sample`    | Custom sample name.  
+|   `fastq_1`   | Full path to FastQ file for ONT long reads or Illumina short reads 1. File must have the extension ".fastq" or ".fastq.qz".  
+|   `fastq_2`   | Full path to FastQ file for Illumina short reads 2. File must have the extension ".fastq" or ".fastq.gz".  
+| `single end`  | True/false indicating whether reads are single end (usually long reads) or paired end (usually short reads).  
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
+
+
+## Parameters
+We recommend specifying parameters in a params file. 
+
+The params.yaml file feeds the pipeline all of your input paths! Create a params.yaml file and enter the path to your long and/or short samplesheet(s). You will continue to build on this params file to provide contaminant databases, an out directory name, and more. An example of a params.yaml is shown here:
+
+
+An example `params.yaml` contains:
+
+```yaml
+input                  :  "./ont_samplesheet.csv"
+shortinput             :  "./illumina_samplesheet.csv"
+pb_input               :  "./pb_samplesheet.csv"
+outdir                 :  "test_outdir"
+fastq                  :  "./Mo_191_p1s.fastq"
+centrifuge_db          :  "./f+b+a+v/"
+busco_lineage          :  "metazoa_odb10"
+summary_txt            :  "./sequencing_summary.txt"
+kraken_db              :  "./kraken_db"
+rcf_db                 :  "./recentrifuge/taxdump/"
+model                  :  "r1041_e82_400bps_sup_g615"
+ragtag_reference       :  "./assembly.fasta"
+<...>
+```
+For best results, please provide full paths. Paths have been truncated for readability.  
+
+For detailed information about parameters, please refer to the [config](../nextflow.config) file.
+
+### General tips for your params file:
+
+* The input path should point to your ONT samplesheet (or PacBio HiFi samplesheet if no ONT available, or Illumina samplesheet if no long reads). The short input path should point to your Illumina samplesheet. The pb_input path should point to your PacBio HiFi samplesheet.
+* When providing a centrifuge database, please ensure that the path points to a DIRECTORY, not a file.
+* Please ensure that your BUSCO lineage aligns with your organism type. (e.g. for japanese walnut tree: "embryophyta_odb10")
+* For more information about specific parameters, please refer to [nextflow.config](https://github.com/emilytrybulec/argonaut/blob/main/nextflow.config). It contains explanations for each possible parameter that can be set in the params.yaml file (look for the groups of "=null" labels)
+
+[Here](https://github.com/emilytrybulec/argonaut/blob/main/params.yaml) is a full params.yaml example for a test run.
+
+Not all parameters are required, and the default settings can be modified for individualized use. If you would like to change any settings dictating which assemblers run, whether short reads are available, or options like length filtering and scaffolding, please create a config file using the directions [below](#Configurations).
+
+### Inputting your own assembly  
+For users who would like to input an existing genome assembly into the pipeline for downstream processing, please add a line to your params file specifying the path to your *.fasta or *.fa file like so:
+```yaml
+existing_assembly        :  "./assembly.fasta"
+```
+Additionally modify your my_config file to indicate that ex_assembly is "true" like so:
+```config
+params{
+  ex_assembly           = true
+}
+```
+Learn more about your my_config file directly below.
+
+## Configurations  
+
+Your my_config file acts as the master switch for controlling the pipeline options. Create a my_config file and populate it with your preferences that differ from the default settings found in [nextflow.config](../nextflow.config). The pipeline accepts fastq files for both short and long reads. ONT and PacBio HiFi reads are considered long read and Illumina reads are considered short read. Please indicate whether your input consists of both or one of the read types in the your my_config file. Specify the full path to your config file with '-c' when [running the nextflow command](#Running-the-pipeline).  
+
+An example `my_config` contains:
+
+```config
+params{
+  shortread           = false
+  min_readlength      = 1000
+  kmer_num            = 19
+  canu                = true
+  ragtag_scaffold     = false
+}
+```
 
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run nf-core/genomeassembly --input samplesheet.csv --outdir <OUTDIR> --genome GRCh37 -profile docker
+nextflow run emilytrybulec/argonaut \
+  -r main \
+  -params-file params.yaml \
+  -c my_config \
+  -profile singularity,xanadu \
 ```
 
-This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
+This will launch the pipeline with the `xanadu` configuration profile, which will allocate resources correctly for Xanadu users running Argonaut at the University of Connecticut. See [below](#Core-Nextflow-arguments) for more information about profiles.
 
 Note that the pipeline will create the following files in your working directory:
 
 ```bash
 work                # Directory containing the nextflow working files
-<OUTDIR>            # Finished results in specified location (defined with --outdir)
+<OUTDIR>            # Finished results in specified location (defined with --outdir in params.yaml)
 .nextflow_log       # Log file from Nextflow
 # Other nextflow hidden files, eg. history of pipeline runs and old logs.
 ```
-
-If you wish to repeatedly use the same parameters for multiple runs, rather than specifying each flag in the command, you can specify these in a params file.
-
-Pipeline settings can be provided in a `yaml` or `json` file via `-params-file <file>`.
-
-> ⚠️ Do not use `-c <file>` to specify parameters as this will result in errors. Custom config files specified with `-c` must only be used for [tuning process resource specifications](https://nf-co.re/docs/usage/configuration#tuning-workflow-resources), other infrastructural tweaks (such as output directories), or module arguments (args).
-> The above pipeline run specified with a params file in yaml format:
-
-```bash
-nextflow run nf-core/genomeassembly -profile docker -params-file params.yaml
-```
-
-with `params.yaml` containing:
-
-```yaml
-input: './samplesheet.csv'
-outdir: './results/'
-genome: 'GRCh37'
-input: 'data'
-<...>
-```
-
-You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
 
 ### Updating the pipeline
 
 When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:
 
 ```bash
-nextflow pull nf-core/genomeassembly
+nextflow pull emilytrybulec/argonaut
 ```
 
 ### Reproducibility
 
-It is a good idea to specify a pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
-
-First, go to the [nf-core/genomeassembly releases page](https://github.com/nf-core/genomeassembly/releases) and find the latest pipeline version - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`. Of course, you can switch to another version by changing the number after the `-r` flag.
-
-This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future. For example, at the bottom of the MultiQC reports.
+It is a good idea to specify a be aware of versions when running the pipeline on your data. Please refer to the collated_versions.yml file for software versions.
 
 To further assist in reproducbility, you can use share and re-use [parameter files](#running-the-pipeline) to repeat pipeline runs with the same settings without having to write out a command with every single parameter.
-
-> 💡 If you wish to share such profile (such as upload as supplementary material for academic publications), make sure to NOT include cluster specific paths to files, nor institutional specific profiles.
 
 ## Core Nextflow arguments
 
@@ -140,16 +179,7 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
   - A generic configuration profile to be used with [Docker](https://docker.com/)
 - `singularity`
   - A generic configuration profile to be used with [Singularity](https://sylabs.io/docs/)
-- `podman`
-  - A generic configuration profile to be used with [Podman](https://podman.io/)
-- `shifter`
-  - A generic configuration profile to be used with [Shifter](https://nersc.gitlab.io/development/shifter/how-to-use/)
-- `charliecloud`
-  - A generic configuration profile to be used with [Charliecloud](https://hpc.github.io/charliecloud/)
-- `apptainer`
-  - A generic configuration profile to be used with [Apptainer](https://apptainer.org/)
-- `conda`
-  - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter, Charliecloud, or Apptainer.
+
 
 ### `-resume`
 
@@ -160,8 +190,6 @@ You can also supply a run name to resume a specific run: `-resume [run-name]`. U
 ### `-c`
 
 Specify the path to a specific config file (this is a core Nextflow command). See the [nf-core website documentation](https://nf-co.re/usage/configuration) for more information.
-
-## Custom configuration
 
 ### Resource requests
 
@@ -180,14 +208,6 @@ To use a different container from the default container or conda environment spe
 A pipeline might not always support every possible argument or option of a particular tool used in pipeline. Fortunately, nf-core pipelines provide some freedom to users to insert additional parameters that the pipeline does not include by default.
 
 To learn how to provide additional arguments to a particular tool of the pipeline, please see the [customising tool arguments](https://nf-co.re/docs/usage/configuration#customising-tool-arguments) section of the nf-core website.
-
-### nf-core/configs
-
-In most cases, you will only need to create a custom config as a one-off but if you and others within your organisation are likely to be running nf-core pipelines regularly and need to use the same settings regularly it may be a good idea to request that your custom config file is uploaded to the `nf-core/configs` git repository. Before you do this please can you test that the config file works with your pipeline of choice using the `-c` parameter. You can then create a pull request to the `nf-core/configs` repository with the addition of your config file, associated documentation file (see examples in [`nf-core/configs/docs`](https://github.com/nf-core/configs/tree/master/docs)), and amending [`nfcore_custom.config`](https://github.com/nf-core/configs/blob/master/nfcore_custom.config) to include your custom profile.
-
-See the main [Nextflow documentation](https://www.nextflow.io/docs/latest/config.html) for more information about creating your own configuration files.
-
-If you have any questions or issues please send us a message on [Slack](https://nf-co.re/join/slack) on the [`#configs` channel](https://nfcore.slack.com/channels/configs).
 
 ## Azure Resource Requests
 

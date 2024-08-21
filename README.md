@@ -1,103 +1,226 @@
-# ![nf-core/genomeassembly](docs/images/nf-core-genomeassembly_logo_light.png#gh-light-mode-only) ![nf-core/genomeassembly](docs/images/nf-core-genomeassembly_logo_dark.png#gh-dark-mode-only)
-
-[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/genomeassembly/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
-
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A522.10.1-23aa62.svg)](https://www.nextflow.io/)
-[![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
-[![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 [![Launch on Nextflow Tower](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Nextflow%20Tower-%234256e7)](https://tower.nf/launch?pipeline=https://github.com/nf-core/genomeassembly)
 
-[![Get help on Slack](http://img.shields.io/badge/slack-nf--core%20%23genomeassembly-4A154B?labelColor=000000&logo=slack)](https://nfcore.slack.com/channels/genomeassembly)[![Follow on Twitter](http://img.shields.io/badge/twitter-%40nf__core-1DA1F2?labelColor=000000&logo=twitter)](https://twitter.com/nf_core)[![Follow on Mastodon](https://img.shields.io/badge/mastodon-nf__core-6364ff?labelColor=FFFFFF&logo=mastodon)](https://mstdn.science/@nf_core)[![Watch on YouTube](http://img.shields.io/badge/youtube-nf--core-FF0000?labelColor=000000&logo=youtube)](https://www.youtube.com/c/nf-core)
-
 ## Introduction
 
-**nf-core/genomeassembly** is a bioinformatics pipeline that ...
 
-<!-- TODO nf-core:
-   Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
-   major pipeline sections and the types of output it produces. You're giving an overview to someone new
-   to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
--->
+**Argonaut** performs **a**utomated **r**eads to **g**enome **o**perations for de **n**ovo **a**ssemblies; it is a bioinformatics pipeline that performs genome assembly on long and short read data. A fastq file and input information is fed to the pipeline, resulting in final assemblies with completeness, contiguity, and correctnesss quality checking at each step. The pipeline accepts short reads, long reads, or both. 
 
-<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
-     workflows use the "tube map" design for that. See https://nf-co.re/docs/contributing/design_guidelines#examples for examples.   -->
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
+<img align="right" height="300" src="https://github.com/emilytrybulec/genomeassembly/assets/114685119/9b900dab-44cb-479e-9362-0c0d9dc00ae0">
 
-1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+## Table of Contents
+- [Pipeline Summary](#Pipeline-Summary)
+- [Quick Start](#Quick-Start)
+- [Output Overview](#Pipeline-Output)
+- [Credits](#Credits)
+- [Contributions & Support](#Contributions-and-Support)
+- [Citations](#Citations)
+   
+## Pipeline Summary
 
-## Usage
+Illumina Short Read 
+1. Read QC, Adaptor Trimming, Contaminant Filtering([`FastQC v0.11.9`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/), [`FastP v0.23.4`](https://github.com/OpenGene/fastp), [`GenomeScope2 v2.0`](http://qb.cshl.edu/genomescope/),[`Jellyfish v2.2.6`](https://github.com/gmarcais/Jellyfish),[`Kraken2 v2.1.2`](https://ccb.jhu.edu/software/kraken2/), [`Recentrifuge v1.9.1`](https://github.com/khyox/recentrifuge),)
+    
+PacBio HiFi Long Read (CCS format)
+1. Read QC, Adaptor Trimming, Contaminant Filtering([`Nanoplot v1.41.0`](https://github.com/wdecoster/NanoPlot),[`CutAdapt v3.4`](https://cutadapt.readthedocs.io/en/stable/),[`GenomeScope2 v2.0`](http://qb.cshl.edu/genomescope/),[`Jellyfish v2.2.6`](https://github.com/gmarcais/Jellyfish),[`Kraken2 v2.1.2`](https://ccb.jhu.edu/software/kraken2/), [`Recentrifuge v1.9.1`](https://github.com/khyox/recentrifuge))
+2. Length Filtering (optional)([`Seqkit v2.4.0`](https://bioinf.shenwei.me/seqkit/usage/#seq), [`Nanoplot v1.41.0`](https://github.com/wdecoster/NanoPlot))
 
-> **Note**
-> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how
-> to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline)
-> with `-profile test` before running the workflow on actual data.
+  
+ONT Long Read
+1. Read QC and Contaminant Filtering([`Nanoplot v1.41.0`](https://github.com/wdecoster/NanoPlot),[`KmerFreq`](https://github.com/fanagislab/kmerfreq), [`GCE`](https://github.com/fanagislab/GCE), [`Centrifuge v1.0.4`](https://ccb.jhu.edu/software/centrifuge/), [`Recentrifuge v1.9.1`](https://github.com/khyox/recentrifuge))
+2. Length Filtering (optional)([`Seqkit v2.4.0`](https://bioinf.shenwei.me/seqkit/usage/#seq), [`Nanoplot v1.41.0`](https://github.com/wdecoster/NanoPlot))
+   
 
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
+All reads are used for the following steps:  
+    <img align="right" width="600" alt="Argonaut Hybrid Workflow" src="https://github.com/emilytrybulec/argonaut/assets/114685119/a746d16c-5197-486b-b5cd-78c3ab54d840">  
 
-First, prepare a samplesheet with your input data that looks as follows:
+3. Assembly 
+- [`Flye v2.9`](https://github.com/fenderglass/Flye) 
+- [`Canu v2.2`](https://github.com/marbl/canu)
+- [`Hifiasm v0.19.8`](https://github.com/chhylp123/hifiasm) 
+- [`MaSuRCA v4.1.0`](https://github.com/alekseyzimin/masurca) 
+- [`Redundans v2.01`](https://github.com/Gabaldonlab/redundans) 
 
-`samplesheet.csv`:
+4. Polish  
+- [`Medaka v1.8.0`](https://github.com/nanoporetech/medaka)
+- [`Racon v1.4.20`](https://github.com/isovic/racon)
+- [`POLCA v4.1.0`](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1007981)
+  
+5. Purge 
+- [`PurgeHaplotigs v1.1.2`](https://bitbucket.org/mroachawri/purge_haplotigs/src/master/)
+- [`Redundans v2.01`](https://github.com/Gabaldonlab/redundans)
+  
+6. Scaffolding 
+- [`RagTag v2.1.0`](https://github.com/malonge/RagTag)
+  
+7. Quality Checking
+- [`BUSCO v5.7.1`](https://busco.ezlab.org/)
+- [`Quast v5.2.0`](https://quast.sourceforge.net/)
+- [`Merqury v1.3`](https://github.com/marbl/merqury)
+- [`PycoQC v4.3.9`](https://github.com/a-slide/pycoQC)
+- [`Minimap2 v2.24`](https://github.com/lh3/minimap2)
+
+8. Assembly Visualization
+- ([`Blobtools v4.3.9`](https://blobtoolkit.genomehubs.org/blobtools2/))  
+
+To the right is a figure detailing the major workflow steps involved in hybrid assembly.
+  
+If you indicate that you would like for long read polishers to be run, the pipeline will default to using PacBio HiFi reads, and using ONT if no PacBio HiFi is available. If short reads are also available, they will automatically be used to polish the assemblies after long read polishing (or assembly if long read polishing is off).   
+  
+Purge Haplotigs is the first step of manual curation, as it produces a histogram that needs to be analyzed for -l, -m, -h flags. The pipeline will stop at the purge step if purge is activated in your configuration and wait for manual input of parameters according to the histogram of your assembly, which can be found in your out directory.
+
+## Quick Start
+**Installation**
+> Only Nextflow and Singularity need to be installed to run Argonaut. Users that would like to run [Centrifuge](https://ccb.jhu.edu/software/centrifuge/manual.shtml#database-download-and-index-building) and/or [Kraken2](https://ccb.jhu.edu/software/kraken2/index.shtml?t=downloads) will need to provide a database. There are similar restrictions for running [Recentrifuge](https://github.com/khyox/recentrifuge/wiki/Installation#3-getting-the-databases) and Blobtools with [Blast](https://www.nlm.nih.gov/ncbi/workshops/2023-08_BLAST_evol/databases.html) and [NCBI](https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/) taxdump. Follow the links provided for database download directions. Xanadu users running Argonaut at the University of Connecticut may use the database paths provided in the example [params.yaml](https://github.com/emilytrybulec/argonaut/blob/main/params.yaml)
+
+**Samplesheets**  
+
+To get started setting up your run, prepare a samplesheet with your input data as follows:
+
+`ont_samplesheet.csv`:
 
 ```csv
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+sample,fastq_1,fastq_2,single_end
+maca_jans_ont,SRR11191910.fastq.gz,,TRUE
 ```
 
-Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
+If more than one read input type is available, prepare a second (and third) samplesheet with your other input data as follows:
 
--->
+`illumina_samplesheet.csv`:
+
+```csv
+sample,fastq_1,fastq_2,single_end
+maca_jans_ill,SRR11191912_1.fastq.gz,SRR11191912_2.fastq.gz,FALSE
+```
+
+`pb_hifi_samplesheet.csv`:
+
+```csv
+sample,fastq_1,fastq_2,single_end
+maca_jans_pb,SRR11191909.fastq.gz,,TRUE
+```
+
+!!! PLEASE ADD "ont", "pb", AND/OR "ill" TO YOUR SAMPLES NAMES !!! Failure to do so will result in assemblers not recognizing your read type.
+
+Additionally, the sample name inputted in your samplesheet will serve as the prefix for your output files. Please indicate which kind of read is being inputted in the sample name. Failure to do so may result in outputs being overwritten. 
+
+
+
+After you have your samplesheet(s), create a params.yaml file to specify the paths to your samplesheet(s), contaminant databases, etc. Most likely, a config file will also need to be made to modify the default settings of the pipeline. Please look through the [nextflow.config](nextflow.config) file to browse the defaults and specify which you would like to change in your my_config file. More information is located in the [usage](docs/usage.md) section.
 
 Now, you can run the pipeline using:
 
-<!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
 
 ```bash
-nextflow run nf-core/genomeassembly \
-   -profile <docker/singularity/.../institute> \
-   --input samplesheet.csv \
-   --outdir <OUTDIR>
+nextflow run emilytrybulec/argonaut \
+  -r main \
+  -params-file params.yaml \
+  -c my_config \
+  -profile singularity,xanadu \
 ```
 
-> **Warning:**
-> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those
-> provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;
-> see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
-
-For more details, please refer to the [usage documentation](https://nf-co.re/genomeassembly/usage) and the [parameter documentation](https://nf-co.re/genomeassembly/parameters).
-
 ## Pipeline output
+All of the output from the programs run in the pipeline pipeline will be located in the out directory specified in params.yaml. The pipeline produces the following labeled directories depending on configurations:
 
-To see the the results of a test run with a full size dataset refer to the [results](https://nf-co.re/genomeassembly/results) tab on the nf-core website pipeline page.
-For more details about the output files and reports, please refer to the
-[output documentation](https://nf-co.re/genomeassembly/output).
+```
+├── 01 READ QC
+│   ├── centrifuge
+│   ├── fastp
+│   ├── fastqc
+│   ├── genome size est
+│   │   ├── genomescope2
+│   │   ├── jellyfish
+│   │   ├── ont gce 
+│   │   ├── ont kmerfreq
+│   ├── kraken2
+│   ├── nanoplot
+│   ├── pacbio cutadapt
+├── 02 ASSEMBLY
+│   ├── hybrid
+│   ├── long read
+│   ├── short read
+├── 03 POLISH
+│   ├── hybrid
+│   │   ├── polca
+│   ├── long read
+│   │   ├── medaka
+│   │   ├── racon
+├── 04 PURGE
+│   ├── align
+│   ├── histogram
+│   ├── purge haplotigs
+│   ├── short read redundans
+├── 05 SCAFFOLD
+├── ASSEMBLY QC
+│   ├── busco
+│   ├── bwamem2
+│   ├── merqury
+│   ├── minimap2
+│   ├── quast
+│   ├── samtools
+├── OUTPUT
+│   ├── blobtools visualization
+│   ├── coverage
+│   ├── genome size estimation
+│   ├── *assemblyStats.txt
+├── PIPELINE INFO
+    └── execution_trace_*.txt
+```
+Some output files have labels such as "dc", indicating that the reads have been decontaminated, or  "lf", indicating that reads have been length filtered.  
+  
+Information about interpreting output is located in the [output](docs/output.md) section.
 
 ## Credits
+emilytrybulec/genomeassembly was originally written by Emily Trybulec.
 
-nf-core/genomeassembly was originally written by emilytrybulec.
+I thank the following people for their extensive assistance in the development of this pipeline:
 
-We thank the following people for their extensive assistance in the development of this pipeline:
+University of Connecticut:  
+<img align="right" height="210" src="https://github.com/emilytrybulec/argonaut/assets/114685119/7a3fd47c-0fbf-443c-a121-9fd8a3da9ba3">
 
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
+* Biodiversity and Conservation Genomics Center  
+     * Jill Wegrzyn  
+     * Cynthia Webster  
+     * Anthony He  
+     * Laurel Humphrey  
+     * Keertana Chagari  
+     * Amanda Mueller  
+     * Cristopher Guzman  
+     * Harshita Akella
+  
+<img align="right" height="140" src="https://github.com/emilytrybulec/argonaut/assets/114685119/91c25e9f-f70b-481f-8aab-55d2d529eca4">
 
+* Rachel O'Neill Lab  
+     * Rachel O’Neill  
+     * Michelle Neitzey  
+     * Nicole Pauloski  
+     * Vel Johnston
+  
+<img align="right" height="150" src="https://github.com/emilytrybulec/argonaut/assets/114685119/161c0c34-4f05-496d-9436-2d087ba5ccd1">  
+
+* Computational Biology Core  
+     * Noah Reid  
+     * Gabe Barrett  
+
+* nf-core Community  
+
+* Zbigniew Trybulec
+
+ 
 ## Contributions and Support
 
-If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
+Development of this pipeline was funded by the University of Connecticut Office of Undergraduate Research through the Summer Undergraduate Research Fund (SURF) Grant.
 
-For further information or help, don't hesitate to get in touch on the [Slack `#genomeassembly` channel](https://nfcore.slack.com/channels/genomeassembly) (you can join with [this invite](https://nf-co.re/join/slack)).
+<img align="right" height="110" src="https://github.com/emilytrybulec/argonaut/assets/114685119/925bab1e-ba82-44d3-b640-3d7cf6c2028f">  
+<img align="right" height="110" src="https://github.com/emilytrybulec/argonaut/assets/114685119/3276ed4c-e272-4ff5-93ba-4a7802bd78aa">  
+
+The Biodiversity and Conservation Genomics Center is a part of the [Earth Biogenome Project](https://www.earthbiogenome.org/), working towards capturing the genetic diversity of life on Earth.
 
 ## Citations
-
-<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use  nf-core/genomeassembly for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
-
-<!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
+Argonaut is currently unpublished. For now, please use the GitHub URL when referencing.
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
-
-You can cite the `nf-core` publication as follows:
 
 > **The nf-core framework for community-curated bioinformatics pipelines.**
 >

@@ -1,10 +1,10 @@
-# nf-core/genomeassembly: Documentation
+# emilytrybulec/argonaut: Documentation
 
-The nf-core/genomeassembly documentation is split into the following pages:
+The emilytrybulec/argonaut documentation is split into the following pages:
 
 - [Usage](usage.md)
-  - An overview of how the pipeline works, how to run it and a description of all of the different command-line flags.
+  - An overview of how the pipeline works and how to run it.
 - [Output](output.md)
   - An overview of the different results produced by the pipeline and how to interpret them.
 
-You can find a lot more documentation about installing, configuring and running nf-core pipelines on the website: [https://nf-co.re](https://nf-co.re)
+Although Argonaut is not an nf-core pipeline, it was build using an nf-core template and with the intention for widespread use. You can find a lot more documentation about installing, configuring and running nf-core pipelines on the website: [https://nf-co.re](https://nf-co.re)

@@ -1,19 +1,19 @@
 # nf-core/genomeassembly: Contributing Guidelines
 
 Hi there!
-Many thanks for taking an interest in improving nf-core/genomeassembly.
+Many thanks for taking an interest in improving emilytrybulec/argonaut.
 
-We try to manage the required tasks for nf-core/genomeassembly using GitHub issues, you probably came to this page when creating one.
+We try to manage the required tasks for emilytrybulec/argonaut using GitHub issues, you probably came to this page when creating one.
 Please use the pre-filled template to save time.
 
 However, don't be put off by this template - other more general issues and suggestions are welcome!
 Contributions to the code are even more welcome ;)
 
-> If you need help using or modifying nf-core/genomeassembly then the best place to ask is on the nf-core Slack [#genomeassembly](https://nfcore.slack.com/channels/genomeassembly) channel ([join our Slack here](https://nf-co.re/join/slack)).
+> If you need help using or modifying emilytrybulec/argonaut then the best place to ask is on the nf-core Slack [#genomeassembly](https://nfcore.slack.com/channels/genomeassembly) channel ([join our Slack here](https://nf-co.re/join/slack)).
 
 ## Contribution workflow
 
-If you'd like to write some code for nf-core/genomeassembly, the standard workflow is as follows:
+If you'd like to write some code for emilytrybulec/argonaut, the standard workflow is as follows:
 
 1. Check that there isn't already an issue about your idea in the [nf-core/genomeassembly issues](https://github.com/nf-core/genomeassembly/issues) to avoid duplicating work. If there isn't one already, please create one so that others know you're working on this
 2. [Fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the [nf-core/genomeassembly repository](https://github.com/nf-core/genomeassembly) to your GitHub account

@@ -1,0 +1,2 @@
+sample,fastq_1,fastq_2,single_end
+chr3_gibbon_pb,/core/projects/EBP/conservation/gen_assembly_pipeline/hoolock_chrm_3/chr3_pb.fastq.gz,,TRUE

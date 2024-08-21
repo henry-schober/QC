@@ -1,23 +1,37 @@
 #!/usr/bin/env nextflow
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nf-core/genomeassembly
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/nf-core/genomeassembly
-    Website: https://nf-co.re/genomeassembly
-    Slack  : https://nfcore.slack.com/channels/genomeassembly
-----------------------------------------------------------------------------------------
-*/
+def helpMessage() {
+	log.info"""
+	========================================================================================
+        GenomeAssembly- a computational tool for de novo eukaryotic genome assembly
+	========================================================================================
+ 	
+	Usage:
+	nextflow run emilytrybulec/genomeassembly -params-file params.yaml
+	
+	Required arguments:
+		--input				 Path to samplesheet with input (*.csv)
+		--centrifuge_db				 Relevant Centrifuge database as source of contaminant screening
+		--busco_lineages_path					 Relevant lineage for BUSCO evaluation (ex. )
+
+	Recommended arguments:
+		--outdir				 Path to the output directory (default: OUTDIR)
+		--max_memory          			 Maximum memory allocated
+	    	--max_cpus              	         Maximum cpus allocated
+    		--max_time                               Maximum time allocated
+
+    Optional arguments:    
+
+   """.stripIndent()
+}
+
+params.help = false
+if (params.help){
+    helpMessage()
+    exit 0
+}
+
 
 nextflow.enable.dsl = 2
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-params.fasta = WorkflowMain.getGenomeAttribute(params, 'fasta')
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,15 +47,14 @@ WorkflowMain.initialise(workflow, params, log)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { GENOMEASSEMBLY } from './workflows/genomeassembly'
+include { GENOMEASSEMBLY as GA } from './workflows/readassembly'
 
 //
-// WORKFLOW: Run main nf-core/genomeassembly analysis pipeline
+// WORKFLOW: Run main genomeassembly analysis pipeline
 //
-workflow NFCORE_GENOMEASSEMBLY {
-    GENOMEASSEMBLY ()
+workflow MAIN {
+    GA ()
 }
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN ALL WORKFLOWS
@@ -53,7 +66,7 @@ workflow NFCORE_GENOMEASSEMBLY {
 // See: https://github.com/nf-core/rnaseq/issues/619
 //
 workflow {
-    NFCORE_GENOMEASSEMBLY ()
+    MAIN ()
 }
 
 /*

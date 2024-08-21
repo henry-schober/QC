@@ -15,7 +15,10 @@ workflow INPUT_CHECK {
         .map { create_fastq_channel(it) }
         .set { reads }
 
+   //ch_fastq = Channel.fromPath(params.fastq)
+
     emit:
+    //ch_fastq
     reads                                     // channel: [ val(meta), [ reads ] ]
     versions = SAMPLESHEET_CHECK.out.versions // channel: [ versions.yml ]
 }
