@@ -1,6 +1,6 @@
 process BUSCO {
     tag "$meta"
-    label 'process_medium'
+    label 'process_meryl'
 
     conda "bioconda::busco=5.4.3"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
