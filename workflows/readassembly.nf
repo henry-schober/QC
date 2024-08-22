@@ -98,9 +98,7 @@ workflow GENOMEASSEMBLY {
     ch_data = INPUT_CHECK ( ch_input )
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
 
-    ch_reads = INPUT_CHECK.out[0]
-
-    def (ch_ont, ch_pb, ch_ill) = ch_reads.branch {
+    def (ch_ont, ch_pb, ch_ill) = INPUT_CHECK.out[0].branch {
         ont: it[0].read_type == 'ont'
         pb:  it[0].read_type == 'pb'
         ill: it[0].read_type == 'ill'
