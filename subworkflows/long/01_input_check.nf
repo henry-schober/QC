@@ -19,11 +19,8 @@ workflow INPUT_CHECK {
             ill: it.read_type == 'ill' }
 
 
-   //ch_fastq = Channel.fromPath(params.fastq)
-
     emit:
-    //ch_fastq
-    reads                                     // channel: [ val(meta), [ reads ] ]
+
     versions = SAMPLESHEET_CHECK.out.versions // channel: [ versions.yml ]
 }
 
