@@ -12,12 +12,11 @@ workflow INPUT_CHECK {
     SAMPLESHEET_CHECK ( samplesheet )
         .csv
         .splitCsv ( header:true, sep:',' )
+        .map { create_fastq_channel(it) }
         .branch{
             ont: it.read_type == 'ont'
             pb:  it.read_type == 'pb'
             ill: it.read_type == 'ill' }
-        .map { create_fastq_channel(it) }
-        .set { reads }
 
 
    //ch_fastq = Channel.fromPath(params.fastq)
@@ -34,6 +33,8 @@ def create_fastq_channel(LinkedHashMap row) {
     def meta = [:]
     meta.id         = row.sample
     meta.single_end = row.single_end.toBoolean()
+    meta.read_type  = row.read_type
+
 
     // add path(s) of the fastq file(s) to the meta map
     def fastq_meta = []
