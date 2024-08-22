@@ -19,9 +19,9 @@ workflow INPUT_CHECK {
 
     reads
         .branch{
-            ont: it.read_type == 'ont'
-            pb:  it.read_type == 'pb'
-            ill: it.read_type == 'ill' }
+            ont: it[0].read_type == 'ont'
+            pb:  it[0].read_type == 'pb'
+            ill: it[0].read_type == 'ill' }
 
 
     emit:
