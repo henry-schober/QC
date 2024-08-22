@@ -98,17 +98,18 @@ workflow GENOMEASSEMBLY {
     ch_data = INPUT_CHECK ( ch_input )
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
 
-    ch_data.branch{
+    INPUT_CHECK.out[0].branch{
             ont: it.read_type == 'ont'
             pb:  it.read_type == 'pb'
             ill: it.read_type == 'ill' }
+            .set{ch_reads}
 
     ch_data.view()
 
     if (params.longread == true){
         if (params.ONT_lr == true) {
             //decontamination and quality checking of long reads
-            READ_QC (ch_data.ont.reads)
+            READ_QC (ch_reads.ont)
             ch_versions = ch_versions.mix(READ_QC.out.versions)
             no_meta_fastq = READ_QC.out[5]
 
@@ -129,7 +130,7 @@ workflow GENOMEASSEMBLY {
             no_meta_ch_ONT = Channel.empty()}
         if (params.PacBioHifi_lr == true) {
             //decontamination and quality checking of long reads
-            READ_QC3 (ch_data.pb.reads)
+            READ_QC3 (ch_reads.pb)
             no_meta_decontamPB = READ_QC3.out[5]
 
             ch_versions = ch_versions.mix(READ_QC3.out.versions)
@@ -168,7 +169,7 @@ workflow GENOMEASSEMBLY {
     if ( params.shortread == true ) {
 
         //adaptor trimming and decontamination of short reads if available
-        READ_QC2 (ch_data.ill.reads)
+        READ_QC2 (ch_reads.ill)
     ch_versions = ch_versions.mix(READ_QC2.out.versions)
         filt_sr_unzip = READ_QC2.out[1]
         filt_sr_nometa = READ_QC2.out[4]
