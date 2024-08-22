@@ -110,17 +110,11 @@ class RowChecker:
                 raise AssertionError("FASTQ pairs must have the same file extensions.")
         else:
             row[self._single_col] = True
-            
+
     def _validate_read_type(self, row):
         """Assert that the read type exists."""
         if len(row[self._read_type_col]) <= 0:
             raise AssertionError("Read type is required.")
-        self._validate_read_type(row[self._read_type_col])
-
-    def _validate_read_type(self, row):
-    """Assert that the read type exists."""
-    if len(row[self._read_type_col]) <= 0:
-        raise AssertionError("Read type is required.")
         
     def _validate_fastq_format(self, filename):
         """Assert that a given filename has one of the expected FASTQ extensions."""
