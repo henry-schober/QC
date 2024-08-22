@@ -15,6 +15,8 @@ workflow INPUT_CHECK {
         .map { create_fastq_channel(it) }
         .set{reads}
 
+    reads.view()
+
     reads
         .branch{
             ont: it.read_type == 'ont'
