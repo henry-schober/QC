@@ -103,6 +103,8 @@ workflow GENOMEASSEMBLY {
             pb:  it.read_type == 'pb'
             ill: it.read_type == 'ill' }
 
+    ch_data.view()
+
     if (params.longread == true){
         if (params.ONT_lr == true) {
             //decontamination and quality checking of long reads
