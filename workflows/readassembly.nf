@@ -98,11 +98,7 @@ workflow GENOMEASSEMBLY {
     ch_data = INPUT_CHECK ( ch_input )
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
 
-    INPUT_CHECK.out[0].branch{
-            ont: it.read_type == 'ont'
-            pb:  it.read_type == 'pb'
-            ill: it.read_type == 'ill' }
-            .set{ch_reads}
+    ch_reads = INPUT_CHECK.out[0]
 
     if (params.longread == true){
         if (params.ONT_lr == true) {
