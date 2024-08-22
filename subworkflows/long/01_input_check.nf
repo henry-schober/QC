@@ -15,15 +15,6 @@ workflow INPUT_CHECK {
         .map { create_fastq_channel(it) }
         .set{reads}
 
-    reads.view()
-
-    reads
-        .branch{
-            ont: it[0].read_type == 'ont'
-            pb:  it[0].read_type == 'pb'
-            ill: it[0].read_type == 'ill' }
-
-
     emit:
     reads
     versions = SAMPLESHEET_CHECK.out.versions // channel: [ versions.yml ]
