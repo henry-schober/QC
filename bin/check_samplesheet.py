@@ -37,6 +37,7 @@ class RowChecker:
         first_col="fastq_1",
         second_col="fastq_2",
         single_col="single_end",
+        read_type_col="read_type",
         **kwargs,
     ):
         """
@@ -52,6 +53,7 @@ class RowChecker:
             single_col (str): The name of the new column that will be inserted and
                 records whether the sample contains single- or paired-end sequencing
                 reads (default "single_end").
+            read_type_col (str): The type of reads being input (e.g., "ont", "pb" or "ill") (default "ont"). 
 
         """
         super().__init__(**kwargs)
@@ -59,6 +61,7 @@ class RowChecker:
         self._first_col = first_col
         self._second_col = second_col
         self._single_col = single_col
+        self._read_type_col = read_type_col
         self._seen = set()
         self.modified = []
 
@@ -75,6 +78,7 @@ class RowChecker:
         self._validate_first(row)
         self._validate_second(row)
         self._validate_pair(row)
+        self._validate_read_type(row)
         self._seen.add((row[self._sample_col], row[self._first_col]))
         self.modified.append(row)
 
@@ -106,7 +110,13 @@ class RowChecker:
                 raise AssertionError("FASTQ pairs must have the same file extensions.")
         else:
             row[self._single_col] = True
-
+            
+    def _validate_read_type(self, row):
+        """Assert that the read type exists."""
+        if len(row[self._read_type_col]) <= 0:
+            raise AssertionError("Read type is required.")
+        self._validate_read_type(row[self._read_type_col])
+        
     def _validate_fastq_format(self, filename):
         """Assert that a given filename has one of the expected FASTQ extensions."""
         if not any(filename.endswith(extension) for extension in self.VALID_FORMATS):
@@ -210,6 +220,7 @@ def check_samplesheet(file_in, file_out):
         checker.validate_unique_samples()
     header = list(reader.fieldnames)
     header.insert(1, "single_end")
+    header.append("read_type")
     # See https://docs.python.org/3.9/library/csv.html#id3 to read up on `newline=""`.
     with file_out.open(mode="w", newline="") as out_handle:
         writer = csv.DictWriter(out_handle, header, delimiter=",")
