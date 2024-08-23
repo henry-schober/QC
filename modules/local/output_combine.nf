@@ -10,6 +10,8 @@ process OUTPUT_COMBINE {
     script: 
     def prefix
     """
+    content=\$(echo '${stat_files}')
 
+    cat \$content >> assemblyStats.txt
     """
 }
