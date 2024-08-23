@@ -38,6 +38,7 @@ if (params.input) { ch_input = file(params.input) }
 // MODULES
 include { CAT } from '../modules/local/cat' 
 include { OUTPUT } from '../modules/local/output' 
+include { OUTPUT_COMBINE } from '../modules/local/output_combine' 
 include { TOTAL_BASES_SR } from '../modules/local/total_bases_sr' 
 include { TOTAL_BASES_LR } from '../modules/local/total_bases_lr' 
 include { COVERAGE_SR } from '../modules/local/coverage_sr'
@@ -634,6 +635,12 @@ workflow GENOMEASSEMBLY {
 
     OUTPUT (ch_output)
     assembly_stats  =   OUTPUT.out.assemblyStats
+
+    assembly_stats
+        .flatten()
+        .set{combo_stats}
+
+    OUTPUT_COMBINE(combo_stats)
 
     //
     // MODULE: MultiQC
