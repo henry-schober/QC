@@ -22,7 +22,6 @@ sample,fastq_1,fastq_2,single_end,read_type
 maca_jans_ont,SRR11191910.fastq.gz,,TRUE,ont
 maca_jans_ill,SRR11191912_1.fastq.gz,SRR11191912_2.fastq.gz,FALSE,ill
 maca_jans_pb,SRR11191909.fastq.gz,,TRUE,pb
-
 ```
 !!! PLEASE ADD "ont", "pb", AND/OR "ill" TO YOUR SAMPLES NAMES !!!   
 Flye and canu will automatically detect your read type based on your samplesheet sample names. Please ensure that read type (ont, pb, or ill) is also indicated in the last column.
