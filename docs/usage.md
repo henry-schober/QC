@@ -32,7 +32,7 @@ Flye and canu will automatically detect your read type based on your samplesheet
 | `single end`  | True/false indicating whether reads are single end (usually long reads) or paired end (usually short reads).  
 | `read_type`   | One of three options indicating the sequencing technology used to generate reads; choice of "ont", "pb", or "ill".  
 
-An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
+The [example samplesheet](../assets/samplesheet.csv) is available in a more readable format.
 
 
 ## Parameters
