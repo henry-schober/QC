@@ -78,36 +78,22 @@ Purge Haplotigs is the first step of manual curation, as it produces a histogram
 
 To get started setting up your run, prepare a samplesheet with your input data as follows:
 
-`ont_samplesheet.csv`:
+`samplesheet.csv`:
 
 ```csv
-sample,fastq_1,fastq_2,single_end
-maca_jans_ont,SRR11191910.fastq.gz,,TRUE
+sample,fastq_1,fastq_2,single_end,read_type
+chr3_gibbon_pb,/core/projects/EBP/conservation/gen_assembly_pipeline/hoolock_chrm_3/chr3_pb.fastq.gz,,TRUE,pb
+chr3_gibbon_ont,/core/projects/EBP/conservation/gen_assembly_pipeline/hoolock_chrm_3/chr3_ont.fastq.gz,,TRUE,ont
+chr3_gibbon_ill,/core/projects/EBP/conservation/gen_assembly_pipeline/hoolock_chrm_3/chr3_ill_R1.paired.fastq.gz,/core/projects/EBP/conservation/gen_assembly_pipeline/hoolock_chrm_3/chr3_ill_R2.paired.fastq.gz,FALSE,ill
 ```
 
-If more than one read input type is available, prepare a second (and third) samplesheet with your other input data as follows:
+!!! PLEASE ADD "ont", "pb", AND/OR "ill" TO YOUR SAMPLES NAMES !!! Failure to do so may result in assemblers not recognizing your read type and/or outputs being overwritten.
 
-`illumina_samplesheet.csv`:
-
-```csv
-sample,fastq_1,fastq_2,single_end
-maca_jans_ill,SRR11191912_1.fastq.gz,SRR11191912_2.fastq.gz,FALSE
-```
-
-`pb_hifi_samplesheet.csv`:
-
-```csv
-sample,fastq_1,fastq_2,single_end
-maca_jans_pb,SRR11191909.fastq.gz,,TRUE
-```
-
-!!! PLEASE ADD "ont", "pb", AND/OR "ill" TO YOUR SAMPLES NAMES !!! Failure to do so will result in assemblers not recognizing your read type.
-
-Additionally, the sample name inputted in your samplesheet will serve as the prefix for your output files. Please indicate which kind of read is being inputted in the sample name. Failure to do so may result in outputs being overwritten. 
+The sample name inputted in your samplesheet will serve as the prefix for your output files. Please indicate which kind of read is being inputted in the sample name, as well as the read type column. 
 
 
 
-After you have your samplesheet(s), create a params.yaml file to specify the paths to your samplesheet(s), contaminant databases, etc. Most likely, a config file will also need to be made to modify the default settings of the pipeline. Please look through the [nextflow.config](nextflow.config) file to browse the defaults and specify which you would like to change in your my_config file. More information is located in the [usage](docs/usage.md) section.
+After you have your samplesheet, create a params.yaml file to specify the paths to your samplesheet, contaminant databases, etc. Most likely, a config file will also need to be made to modify the default settings of the pipeline. Please look through the [nextflow.config](nextflow.config) file to browse the defaults and specify which you would like to change in your my_config file. More information is located in the [usage](docs/usage.md) section.
 
 Now, you can run the pipeline using:
 

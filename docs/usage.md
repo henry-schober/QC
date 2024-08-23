@@ -13,40 +13,26 @@ You will need to create a samplesheet with information about the samples you wou
 ### Using long and short reads
 
 The `sample` identifiers are important for naming throughout the pipeline, and we recommend that specific sample names are used, indicating read type. The pipeline requires concatenated raw reads before performing any downstream analysis. For best results, please provide the entire path to the reads.
-Below is an example samplesheet for long reads:
+Below is an example samplesheet containing all read types:
 
-`ont_samplesheet.csv`:
-
-```csv
-sample,fastq_1,fastq_2,single_end
-maca_jans_ont,SRR11191910.fastq.gz,,TRUE
-```
-
-If more than one read input type is available, prepare a second (and third) samplesheet with your other input data as follows:
-
-`illumina_samplesheet.csv`:
+`samplesheet.csv`:
 
 ```csv
-sample,fastq_1,fastq_2,single_end
-maca_jans_ill,SRR11191912_1.fastq.gz,SRR11191912_2.fastq.gz,FALSE
+sample,fastq_1,fastq_2,single_end,read_type
+maca_jans_ont,SRR11191910.fastq.gz,,TRUE,ont
+maca_jans_ill,SRR11191912_1.fastq.gz,SRR11191912_2.fastq.gz,FALSE,ill
+maca_jans_pb,SRR11191909.fastq.gz,,TRUE,pb
 ```
-
-`pb_hifi_samplesheet.csv`:
-
-```csv
-sample,fastq_1,fastq_2,single_end
-maca_jans_pb,SRR11191909.fastq.gz,,TRUE
-```
-
 !!! PLEASE ADD "ont", "pb", AND/OR "ill" TO YOUR SAMPLES NAMES !!!   
-Flye and canu will automatically detect your read type based on your samplesheet sample names. Please ensure that your fastq files have read type indicators (ont, pb, or ill).
+Flye and canu will automatically detect your read type based on your samplesheet sample names. Please ensure that read type (ont, pb, or ill) is also indicated in the last column.
 
 |   `sample`    | Custom sample name.  
 |   `fastq_1`   | Full path to FastQ file for ONT long reads or Illumina short reads 1. File must have the extension ".fastq" or ".fastq.qz".  
 |   `fastq_2`   | Full path to FastQ file for Illumina short reads 2. File must have the extension ".fastq" or ".fastq.gz".  
 | `single end`  | True/false indicating whether reads are single end (usually long reads) or paired end (usually short reads).  
+| `read_type`   | One of three options indicating the sequencing technology used to generate reads; choice of "ont", "pb", or "ill".  
 
-An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
+The [example samplesheet](../assets/samplesheet.csv) is available in a more readable format.
 
 
 ## Parameters
@@ -58,11 +44,9 @@ The params.yaml file feeds the pipeline all of your input paths! Create a params
 An example `params.yaml` contains:
 
 ```yaml
-input                  :  "./ont_samplesheet.csv"
-shortinput             :  "./illumina_samplesheet.csv"
-pb_input               :  "./pb_samplesheet.csv"
+input                  :  "./samplesheet.csv"
 outdir                 :  "test_outdir"
-fastq                  :  "./Mo_191_p1s.fastq"
+fastq                  :  "./SRR11191910.fastq.gz"
 centrifuge_db          :  "./f+b+a+v/"
 busco_lineage          :  "metazoa_odb10"
 summary_txt            :  "./sequencing_summary.txt"
@@ -78,7 +62,7 @@ For detailed information about parameters, please refer to the [config](../nextf
 
 ### General tips for your params file:
 
-* The input path should point to your ONT samplesheet (or PacBio HiFi samplesheet if no ONT available, or Illumina samplesheet if no long reads). The short input path should point to your Illumina samplesheet. The pb_input path should point to your PacBio HiFi samplesheet.
+* The fastq path should point to one of your read files. If more than one read input is available, input the path to any one of the fastqs here. This parameter is mostly for pipeline initiation and not very important for processing.
 * When providing a centrifuge database, please ensure that the path points to a DIRECTORY, not a file.
 * Please ensure that your BUSCO lineage aligns with your organism type. (e.g. for japanese walnut tree: "embryophyta_odb10")
 * For more information about specific parameters, please refer to [nextflow.config](https://github.com/emilytrybulec/argonaut/blob/main/nextflow.config). It contains explanations for each possible parameter that can be set in the params.yaml file (look for the groups of "=null" labels)

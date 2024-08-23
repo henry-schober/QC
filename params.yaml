@@ -1,6 +1,4 @@
 input                  :  "/core/projects/EBP/conservation/gen_assembly_pipeline/nextflow_dev/samplesheet_test.csv"
-pb_input               :  "/core/projects/EBP/conservation/gen_assembly_pipeline/nextflow_dev/hifi_samplesheet_test.csv"
-shortinput             :  "/core/projects/EBP/conservation/gen_assembly_pipeline/nextflow_dev/shortread_samplesheet.csv"
 outdir                 :  "test_outdir_9_191sr"
 fastq                  :  "/core/projects/EBP/conservation/zigzag_coral/191/long_read/01_raw_reads/Mo_191_p1s.fastq"
 centrifuge_db          :  "/core/labs/Wegrzyn/IngaGenome/Contam/longReads/f+b+a+v/"
