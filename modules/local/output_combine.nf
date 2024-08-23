@@ -12,6 +12,8 @@ process OUTPUT_COMBINE {
     """
     content=\$(echo '${stat_files}')
 
-    paste \$content >> assemblyStats.txt
+    touch assemblyStats.txt
+
+    paste assemblyStats.txt \$content >> assemblyStats.txt
     """
 }
