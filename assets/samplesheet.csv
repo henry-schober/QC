@@ -1,2 +1,4 @@
-sample,fastq_1,fastq_2,single_end
-Mo_191_ont,/core/projects/EBP/conservation/zigzag_coral/191/long_read/01_raw_reads/Mo_191_p1s.fastq,,TRUE
+sample,fastq_1,fastq_2,single_end,read_type
+maca_jans_ont,SRR11191910.fastq.gz,,TRUE,ont
+maca_jans_ill,SRR11191912_1.fastq.gz,SRR11191912_2.fastq.gz,FALSE,ill
+maca_jans_pb,SRR11191909.fastq.gz,,TRUE,pb
