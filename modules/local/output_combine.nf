@@ -12,6 +12,6 @@ process OUTPUT_COMBINE {
     """
     content=\$(echo '${stat_files}')
 
-    cat \$content >> assemblyStats.txt
+    paste \$content >> assemblyStats.txt
     """
 }
