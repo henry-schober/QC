@@ -30,7 +30,7 @@ workflow READ_QC3 {
 	    ch_versions = ch_versions.mix(CUTADAPT.out.versions)
 
         CUTADAPT.out.reads
-                .map { file -> tuple([id:file.baseName, single_end:true], file)  }
+                .map { file -> tuple([id:file.simpleName, single_end:true], file)  }
                 .set { adaptor_trimmed }
 
         if ( params.kraken_db == null ){
@@ -46,7 +46,7 @@ workflow READ_QC3 {
             filt_pbhifi = KRAKEN2_KRAKEN2_PB.out.unclassified_reads_fastq   
 
             filt_pbhifi
-                .map { file -> tuple([id:file.baseName, single_end:true], file)  }
+                .map { file -> tuple([id:file.simpleName, single_end:true], file)  }
                 .set { filtered_fastq }
 
             if( params.rcf_db ){
