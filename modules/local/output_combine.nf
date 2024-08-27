@@ -10,6 +10,6 @@ process OUTPUT_COMBINE {
     script: 
     def prefix
     """
-    paste *.txt > assemblyStats.txt
+    paste *.txt > all_assemblyStats.txt
     """
 }
