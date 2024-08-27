@@ -10,12 +10,6 @@ wprocess OUTPUT_COMBINE {
     script: 
     def prefix
     """
-    content=\$(echo '${files[]}')
-
-    for f in *.txt
-        do
-        paste $content >> assemblyStats.txt
-        done
-
+    paste *.txt > assemblyStats.txt
     """
 }
