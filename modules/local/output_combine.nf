@@ -1,4 +1,4 @@
-wprocess OUTPUT_COMBINE {
+process OUTPUT_COMBINE {
     label 'process_low'
 
     input:
