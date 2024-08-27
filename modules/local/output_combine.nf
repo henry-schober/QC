@@ -12,13 +12,10 @@ process OUTPUT_COMBINE {
     """
     content=\$(echo '${stat_files}')
 
-    # Check if assemblyStats.txt exists
-    if [[ -f assemblyStats.txt ]]; then
-        paste assemblyStats.txt \$content >> temp.txt
-    else
-        paste \$content > temp.txt
-    fi
-    
-    mv temp.txt assemblyStats.txt
+    for f in *.txt
+        do
+        paste $content >> assemblyStats.txt
+        done
+
     """
 }
