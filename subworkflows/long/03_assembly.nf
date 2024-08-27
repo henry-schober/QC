@@ -46,7 +46,7 @@ workflow ASSEMBLY {
             flye_assembly      = FLYE.out.fasta   
 
             flye_assembly
-                .map { file -> tuple(id: file.baseName, file)  }
+                .map { file -> tuple(id: file.simpleName, file)  }
                 .set { f_assembly }      
         } else {
             f_assembly = Channel.empty() 
@@ -59,7 +59,7 @@ workflow ASSEMBLY {
             canu_assembly      = CANU.out.assembly   
 
             canu_assembly
-                .map { file -> tuple(id: file.baseName, file)  }
+                .map { file -> tuple(id: file.simpleName, file)  }
                 .set { c_assembly }
         } else {
             canu_assembly = Channel.empty() 
@@ -73,7 +73,7 @@ workflow ASSEMBLY {
             masurca_assembly    = MASURCA.out.fasta
 
             masurca_assembly
-                .map { file -> tuple(id: file.baseName, file)  }
+                .map { file -> tuple(id: file.simpleName, file)  }
                 .set { m_assembly } 
             } else {
             println "hybrid assembly with maSuRCA!"
@@ -81,7 +81,7 @@ workflow ASSEMBLY {
             masurca_assembly    = MASURCA.out.fasta
 
             masurca_assembly
-                .map { file -> tuple(id: file.baseName, file)  }
+                .map { file -> tuple(id: file.simpleName, file)  }
                 .set { m_assembly } 
         }} else {
             m_assembly = Channel.empty() 
@@ -95,7 +95,7 @@ workflow ASSEMBLY {
                 hifi_assembly    = HIFIASM.out.assembly_fasta
 
                 hifi_assembly
-                    .map { file -> tuple(id: file.baseName, file)  }
+                    .map { file -> tuple(id: file.simpleName, file)  }
                     .set { h_assembly }
             } else { 
                 HIFIASM(pacbio_reads, [])
@@ -103,7 +103,7 @@ workflow ASSEMBLY {
                 hifi_assembly    = HIFIASM.out.assembly_fasta
 
                 hifi_assembly
-                    .map { file -> tuple(id: file.baseName, file)  }
+                    .map { file -> tuple(id: file.simpleName, file)  }
                     .set { h_assembly }           
         }} else {
             h_assembly = Channel.empty() 
@@ -115,7 +115,7 @@ workflow ASSEMBLY {
             existing_assembly = Channel.fromPath(params.existing_assembly)
 
             existing_assembly
-                .map { file -> tuple(id: file.baseName, file)  }
+                .map { file -> tuple(id: file.simpleName, file)  }
                 .set { ex_assembly }
         } else {
             ex_assembly = Channel.empty() 
