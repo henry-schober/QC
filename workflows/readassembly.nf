@@ -637,8 +637,7 @@ workflow GENOMEASSEMBLY {
     assembly_stats  =   OUTPUT.out.assemblyStats
 
     assembly_stats
-        .mix()
-        .collect()
+        .collect(sort: true)
         .set{combo_stats}
 
     OUTPUT_COMBINE(combo_stats)
