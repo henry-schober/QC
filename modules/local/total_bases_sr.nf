@@ -16,7 +16,7 @@ process TOTAL_BASES_SR {
     sed -n '7p' < $fastp_report | grep -o -E "[0-9]+" > totalBasesSR_before.txt
     sed -n '18p' < $fastp_report | grep -o -E "[0-9]+" > totalBasesSR_filtered.txt
 
-    head -1 totalBasesSR_before.txt | numfmt --grouping > totalBasesSR_before_pretty.txt
-    head -1 totalBasesSR_filtered.txt | numfmt --grouping > totalBasesSR_filtered_pretty.txt
+    head -1 totalBasesSR_before.txt | numfmt --to=si > totalBasesSR_before_pretty.txt
+    head -1 totalBasesSR_filtered.txt | numfmt --to=si > totalBasesSR_filtered_pretty.txt
     """
 }
