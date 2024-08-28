@@ -48,9 +48,9 @@ workflow QC_1 {
             .set{align_ch}
 
         // align reads
-        MINIMAP2_ALIGN(align_ch, params.bam_format, params.cigar_paf_format, params.cigar_bam)
-        ch_align_bam = MINIMAP2_ALIGN.out.bam
-        ch_align_paf = MINIMAP2_ALIGN.out.paf
+        // MINIMAP2_ALIGN(align_ch, params.bam_format, params.cigar_paf_format, params.cigar_bam)
+        //ch_align_bam = MINIMAP2_ALIGN.out.bam
+        //ch_align_paf = MINIMAP2_ALIGN.out.paf
 
         fastq_filt
             .map { file -> file }
@@ -61,8 +61,8 @@ workflow QC_1 {
             .combine(fastq_no_meta)
             .set{ch_combo}
         
-        SAMTOOLS_INDEX (MINIMAP2_ALIGN.out.bam)
-        ch_sam = SAMTOOLS_INDEX.out.sam
+        //SAMTOOLS_INDEX (MINIMAP2_ALIGN.out.bam)
+        //ch_sam = SAMTOOLS_INDEX.out.sam
 
         ch_combo
             .join(ch_sam)
@@ -105,8 +105,11 @@ workflow QC_1 {
         else {
             MERYL_COUNT ( fastq_filt, params.kmer_num )
         }
+
         WINNOWMAP(align_ch, MERYL_COUNT.out.repetitive_k)
-        
+        ch_align_bam = WINNOWMAP.out.bam
+        ch_sam = WINNOWMAP.out.sam
+
         assemblies
             .combine(MERYL_COUNT.out.meryl_db)
             .set{ch_input_merqury}
