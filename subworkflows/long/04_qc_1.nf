@@ -82,9 +82,9 @@ workflow QC_1 {
 
         // run BUSCO
         COMPLEASM(assemblies, params.lineage)
-        ch_busco = BUSCO.out.short_summaries_txt
-        ch_busco_full_table = BUSCO.out.full_table
-        ch_versions = ch_versions.mix(BUSCO.out.versions)
+        ch_busco = COMPLEASM.out.txt
+        //ch_busco_full_table = BUSCO.out.full_table
+        //ch_versions = ch_versions.mix(BUSCO.out.versions)
 
     
         if ( params.summary_txt_file == true ) {
