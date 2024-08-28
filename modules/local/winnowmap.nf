@@ -14,6 +14,7 @@ process WINNOWMAP {
 
     output:
     tuple val(meta), path("*.bam"), emit: bam
+    tuple val(meta), path("*.sam"), emit: sam
 
     when:
     task.ext.when == null || task.ext.when
@@ -29,6 +30,6 @@ process WINNOWMAP {
       $reference \\
       $reads > ${prefix}.sam
 
-    samtools view -bS ${prefix}.sam > ${prefix}.bam
+    samtools sort ${prefix}.sam -o ${prefix}_sorted.bam
     """
 }
