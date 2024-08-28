@@ -1,5 +1,5 @@
 process COMPLEASM {
-    tag "$meta"
+    tag "$meta.id"
     label 'process_medium'
 
     conda "bioconda::quast=5.2.0"
