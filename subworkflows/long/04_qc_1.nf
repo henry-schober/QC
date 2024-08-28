@@ -9,6 +9,7 @@ include { SAMTOOLS_INDEX } from '../../modules/nf-core/samtools/index/main'
 include { BWAMEM2_INDEX } from '../../modules/nf-core/bwamem2/index/main' 
 include { BWAMEM2_MEM } from '../../modules/nf-core/bwamem2/mem/main' 
 include { COMPLEASM } from '../../modules/local/compleasm'  
+include { WINNOWMAP } from '../../modules/local/winnowmap'  
 
 workflow QC_1 {
 
@@ -104,7 +105,8 @@ workflow QC_1 {
         else {
             MERYL_COUNT ( fastq_filt, params.kmer_num )
         }
-
+        WINNOWMAP(align_ch, MERYL_COUNT.out.repetitive_k)
+        
         assemblies
             .combine(MERYL_COUNT.out.meryl_db)
             .set{ch_input_merqury}
