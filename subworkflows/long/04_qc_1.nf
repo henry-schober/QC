@@ -83,7 +83,7 @@ workflow QC_1 {
         // run BUSCO
         COMPLEASM(assemblies, params.lineage)
         ch_busco = COMPLEASM.out.txt
-        //ch_busco_full_table = BUSCO.out.full_table
+        ch_busco_full_table = Channel.empty() 
         //ch_versions = ch_versions.mix(BUSCO.out.versions)
 
     
