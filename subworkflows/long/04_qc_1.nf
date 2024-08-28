@@ -8,6 +8,7 @@ include { MERQURY } from '../../modules/nf-core/merqury/main'
 include { SAMTOOLS_INDEX } from '../../modules/nf-core/samtools/index/main' 
 include { BWAMEM2_INDEX } from '../../modules/nf-core/bwamem2/index/main' 
 include { BWAMEM2_MEM } from '../../modules/nf-core/bwamem2/mem/main' 
+include { COMPLEASM } from '../../modules/local/compleasm'  
 
 workflow QC_1 {
 
@@ -80,7 +81,7 @@ workflow QC_1 {
         ch_versions = ch_versions.mix(QUAST.out.versions)
 
         // run BUSCO
-        BUSCO(assemblies, params.busco_lineage, [], [])
+        COMPLEASM(assemblies, params.lineage)
         ch_busco = BUSCO.out.short_summaries_txt
         ch_busco_full_table = BUSCO.out.full_table
         ch_versions = ch_versions.mix(BUSCO.out.versions)
