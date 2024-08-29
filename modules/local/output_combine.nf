@@ -5,7 +5,7 @@ process OUTPUT_COMBINE {
     path(files)
 
     output:
-    tuple val(meta), path("assemblyStats.txt")       , emit: assemblyStats
+    path("assemblyStats.txt")       , emit: assemblyStats
    
     script: 
     def prefix
