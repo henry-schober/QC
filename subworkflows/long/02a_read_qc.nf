@@ -59,6 +59,7 @@ workflow READ_QC {
                  filtered_fastq
                     .map { file -> file }
                     .set { fastq_filt }
+                centrifuge_out = Channel.empty()
             }
         }
 
