@@ -14,7 +14,6 @@ process WINNOWMAP {
     val(kmernum)
 
     output:
-    tuple val(meta), path("*.bam"), emit: bam
     tuple val(meta), path("*.sam"), emit: sam
 
     when:
