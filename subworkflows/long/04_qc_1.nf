@@ -64,15 +64,7 @@ workflow QC_1 {
         //SAMTOOLS_INDEX (MINIMAP2_ALIGN.out.bam)
         //ch_sam = SAMTOOLS_INDEX.out.sam
 
-        ch_combo
-            .join(ch_sam)
-            .set{racon} 
- 
-        } else {racon = Channel.empty()
-                ch_index = Channel.empty()
-                ch_align_bam = Channel.empty()
-                ch_align_paf = Channel.empty()
-                ch_sam = Channel.empty()}
+        
 
         // run quast
         QUAST(
@@ -109,6 +101,16 @@ workflow QC_1 {
         WINNOWMAP(align_ch, MERYL_COUNT.out.repetitive_k)
         ch_align_bam = WINNOWMAP.out.bam
         ch_sam = WINNOWMAP.out.sam
+
+        ch_combo
+            .join(ch_sam)
+            .set{racon} 
+ 
+        } else {racon = Channel.empty()
+                ch_index = Channel.empty()
+                ch_align_bam = Channel.empty()
+                ch_align_paf = Channel.empty()
+                ch_sam = Channel.empty()}
 
         assemblies
             .combine(MERYL_COUNT.out.meryl_db)
