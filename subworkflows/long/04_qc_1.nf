@@ -10,6 +10,7 @@ include { BWAMEM2_INDEX } from '../../modules/nf-core/bwamem2/index/main'
 include { BWAMEM2_MEM } from '../../modules/nf-core/bwamem2/mem/main' 
 include { COMPLEASM } from '../../modules/local/compleasm'  
 include { WINNOWMAP } from '../../modules/local/winnowmap'  
+include { SAMTOOLS_SORT } from '../../modules/nf-core/samtools/sort'
 
 workflow QC_1 {
 
@@ -104,8 +105,10 @@ workflow QC_1 {
 
         if (params.longread == true){
             WINNOWMAP(align_ch, MERYL_COUNT.out.repetitive_k)
-            ch_align_bam = WINNOWMAP.out.bam
             ch_sam = WINNOWMAP.out.sam
+
+            SAMTOOLS_SORT(ch_sam)
+            ch_align_bam = SAMTOOLS_SORT.out.bam
 
             ch_combo
                 .join(ch_sam)
