@@ -52,6 +52,8 @@ workflow QC_1 {
         //ch_align_bam = MINIMAP2_ALIGN.out.bam
         //ch_align_paf = MINIMAP2_ALIGN.out.paf
 
+        ch_align_paf = Channel.empty() 
+
         fastq_filt
             .map { file -> file }
             .flatten()
@@ -64,7 +66,9 @@ workflow QC_1 {
         //SAMTOOLS_INDEX (MINIMAP2_ALIGN.out.bam)
         //ch_sam = SAMTOOLS_INDEX.out.sam
 
-        
+        } else {ch_combo = Channel.empty()
+                ch_index = Channel.empty()
+                ch_align_paf = Channel.empty()}
 
         // run quast
         QUAST(
@@ -98,18 +102,17 @@ workflow QC_1 {
             MERYL_COUNT ( fastq_filt, params.kmer_num )
         }
 
-        WINNOWMAP(align_ch, MERYL_COUNT.out.repetitive_k)
-        ch_align_bam = WINNOWMAP.out.bam
-        ch_sam = WINNOWMAP.out.sam
+        if (params.longread == true){
+            WINNOWMAP(align_ch, MERYL_COUNT.out.repetitive_k)
+            ch_align_bam = WINNOWMAP.out.bam
+            ch_sam = WINNOWMAP.out.sam
 
-        ch_combo
-            .join(ch_sam)
-            .set{racon} 
+            ch_combo
+                .join(ch_sam)
+                .set{racon} 
  
         } else {racon = Channel.empty()
-                ch_index = Channel.empty()
                 ch_align_bam = Channel.empty()
-                ch_align_paf = Channel.empty()
                 ch_sam = Channel.empty()}
 
         assemblies
