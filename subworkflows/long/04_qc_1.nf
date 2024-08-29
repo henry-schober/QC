@@ -104,7 +104,7 @@ workflow QC_1 {
         }
 
         if (params.longread == true){
-            WINNOWMAP(align_ch, MERYL_COUNT.out.repetitive_k)
+            WINNOWMAP(align_ch, MERYL_COUNT.out.repetitive_k, params.kmer_num)
             ch_sam = WINNOWMAP.out.sam
 
             SAMTOOLS_SORT(ch_sam)
