@@ -28,7 +28,7 @@ process WINNOWMAP {
     """
     winnowmap \\
       -W $repetitive_txt \\
-      -k $kmernum
+      -k $kmernum \\
       -ax ${auto_pb_mode}${auto_ont_mode} \\
       $reference \\
       $reads > ${prefix}.sam
