@@ -11,6 +11,7 @@ process WINNOWMAP {
     input:
     tuple val(meta), path(reference), path(reads)
     tuple val(meta), path(repetitive_txt)
+    val(kmernum)
 
     output:
     tuple val(meta), path("*.bam"), emit: bam
@@ -28,6 +29,7 @@ process WINNOWMAP {
     """
     winnowmap \\
       -W $repetitive_txt \\
+      -k $kmernum
       -ax ${auto_pb_mode}${auto_ont_mode} \\
       $reference \\
       $reads > ${prefix}.sam
