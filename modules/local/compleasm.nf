@@ -12,14 +12,14 @@ process COMPLEASM {
     val lineage
 
     output:
-    tuple val(meta), path('*.txt')  , emit: txt
+    tuple val(meta), path('${prefix}/*.txt')  , emit: txt
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     def args = task.ext.args   ?: ''
-    def prefix = task.ext.prefix ?: "${meta}"
+    def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
     compleasm download $lineage
