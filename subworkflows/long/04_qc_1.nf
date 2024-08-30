@@ -1,8 +1,8 @@
 include { QUAST } from '../../modules/local/quast'  
 include { BUSCO } from '../../modules/nf-core/busco/main' 
 include { PYCOQC } from '../../modules/nf-core/pycoqc/main'  
-include { MINIMAP2_INDEX } from '../../modules/nf-core/minimap2/index/main' 
-include { MINIMAP2_ALIGN } from '../../modules/nf-core/minimap2/align/main'  
+//include { MINIMAP2_INDEX } from '../../modules/nf-core/minimap2/index/main' 
+//include { MINIMAP2_ALIGN } from '../../modules/nf-core/minimap2/align/main'  
 include { MERYL_COUNT } from '../../modules/nf-core/meryl/count/main' 
 include { MERQURY } from '../../modules/nf-core/merqury/main' 
 include { SAMTOOLS_INDEX } from '../../modules/nf-core/samtools/index/main' 
@@ -78,10 +78,22 @@ workflow QC_1 {
         ch_quast = QUAST.out.results
         ch_versions = ch_versions.mix(QUAST.out.versions)
 
-        // run BUSCO
-        COMPLEASM(assemblies, params.lineage)
-        ch_busco = COMPLEASM.out.txt
-        ch_busco_full_table = Channel.empty() 
+        // run BUSCO or compleasm
+        if (params.busco == true){
+            BUSCO(assemblies, params.busco_lineage, [], [])
+            ch_busco = BUSCO.out.short_summaries_txt
+            ch_busco_full_table = BUSCO.out.full_table
+            ch_versions = ch_versions.mix(BUSCO.out.versions)
+        }
+
+        if (params.compleasm == true){
+            COMPLEASM(assemblies, params.lineage)
+            ch_busco = COMPLEASM.out.txt
+            if (params.busco == false){
+                ch_busco_full_table = Channel.empty() 
+            }
+        }
+        
         //ch_versions = ch_versions.mix(BUSCO.out.versions)
 
     
