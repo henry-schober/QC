@@ -96,7 +96,7 @@ workflow QC_2 {
         }
 
         if (params.compleasm == true){
-            COMPLEASM(assemblies, params.lineage)
+            COMPLEASM(polished_assemblies, params.lineage)
             ch_busco 
                 .concat(COMPLEASM.out.txt)
                 .set { ch_busco } 
