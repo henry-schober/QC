@@ -64,8 +64,7 @@ workflow QC_1 {
             .combine(fastq_no_meta)
             .set{ch_combo}
         
-        //SAMTOOLS_INDEX (MINIMAP2_ALIGN.out.bam)
-        //ch_sam = SAMTOOLS_INDEX.out.sam
+
 
         } else {ch_combo = Channel.empty()
                 ch_index = Channel.empty()
@@ -93,21 +92,6 @@ workflow QC_1 {
                 ch_busco_full_table = Channel.empty() 
             }
         }
-        
-        //ch_versions = ch_versions.mix(BUSCO.out.versions)
-
-    
-        if ( params.summary_txt_file == true ) {
-        // create summary txt channel with meta id and run pycoQC
-        ch_summarytxt = summarytxt.map { file -> tuple(file.baseName, file) }
-
-        PYCOQC (
-            ch_summarytxt, MINIMAP2_ALIGN.out.bam, SAMTOOLS_INDEX.out.bai
-        )
-        ch_versions = ch_versions.mix(PYCOQC.out.versions)
-        } else {
-            ch_summarytxt = Channel.empty()
-        }
 
         if ( params.shortread == true ) {
             MERYL_COUNT ( shortreads, params.kmer_num ) }
@@ -129,6 +113,25 @@ workflow QC_1 {
         } else {racon = Channel.empty()
                 ch_align_bam = Channel.empty()
                 ch_sam = Channel.empty()}
+
+    if ( params.longread == true ){
+            SAMTOOLS_INDEX (ch_bam)
+            ch_sam = SAMTOOLS_INDEX.out.sam
+        } else if ( params.shortread == true ){ 
+            SAMTOOLS_INDEX (BWAMEM2_MEM.out.bam)
+            ch_sam = SAMTOOLS_INDEX.out.sam}
+
+    if ( params.summary_txt_file == true ) {
+        // create summary txt channel with meta id and run pycoQC
+        ch_summarytxt = summarytxt.map { file -> tuple(file.baseName, file) }
+
+        PYCOQC (
+            ch_summarytxt, ch_bam, SAMTOOLS_INDEX.out.bai
+        )
+        ch_versions = ch_versions.mix(PYCOQC.out.versions)
+        } else {
+            ch_summarytxt = Channel.empty()
+        }
 
         assemblies
             .combine(MERYL_COUNT.out.meryl_db)
