@@ -312,7 +312,7 @@ workflow GENOMEASSEMBLY {
     lr_assemblies
         .concat(sr_assemblies)
         .flatten()
-        .map { file -> tuple(id: file.baseName, file) }
+        .map { file -> tuple(id: file.simpleName, file) }
         .set{all_assemblies}
 
     lr_assemblies
