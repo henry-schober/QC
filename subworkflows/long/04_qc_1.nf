@@ -155,6 +155,7 @@ workflow QC_1 {
         ch_sam
         ch_busco_full_table
         racon
+        MERYL_COUNT.out.repetitive_k
 
         
     versions = ch_versions                     // channel: [ versions.yml ]
