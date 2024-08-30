@@ -105,18 +105,16 @@ workflow QC_2 {
             }
         }
 
-    //if ( params.longread == true ){
-    //    SAMTOOLS_INDEX (MINIMAP2_ALIGN.out.bam)
-    //    ch_sam = SAMTOOLS_INDEX.out.sam
-    //} else if ( params.shortread == true ){ 
-    //    SAMTOOLS_INDEX (BWAMEM2_MEM.out.bam)
-    //    ch_sam = SAMTOOLS_INDEX.out.sam }
+    if ( params.longread == true ){
+        SAMTOOLS_INDEX (ch_bam)
+    } else if ( params.shortread == true ){ 
+        SAMTOOLS_INDEX (BWAMEM2_MEM.out.bam) }
 
     if ( params.summary_txt_file == true ) {
         ch_summarytxt = summarytxt.map { file -> tuple(file.baseName, file) }
 
         PYCOQC (
-            ch_summarytxt, MINIMAP2_ALIGN.out.bam, SAMTOOLS_INDEX.out.bai
+            ch_summarytxt, ch_bam, SAMTOOLS_INDEX.out.bai
         )
         ch_versions = ch_versions.mix(PYCOQC.out.versions)
     } else {
