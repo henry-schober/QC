@@ -8,6 +8,9 @@ include { MERQURY } from '../../modules/nf-core/merqury/main'
 include { SAMTOOLS_INDEX } from '../../modules/nf-core/samtools/index/main' 
 include { BWAMEM2_INDEX } from '../../modules/nf-core/bwamem2/index/main' 
 include { BWAMEM2_MEM } from '../../modules/nf-core/bwamem2/mem/main' 
+include { COMPLEASM } from '../../modules/local/compleasm'  
+include { WINNOWMAP } from '../../modules/local/winnowmap'  
+include { SAMTOOLS_SORT } from '../../modules/nf-core/samtools/sort'
 
 workflow QC_2 {
 
@@ -43,7 +46,6 @@ workflow QC_2 {
         
         // build index
         
-
         polished_assemblies
             .combine(no_meta_fq)
             .set{align_ch}
@@ -65,9 +67,9 @@ workflow QC_2 {
        // ch_bam = MINIMAP2_ALIGN.out.bam
        // ch_align_paf
         //    .concat(MINIMAP2_ALIGN.out.paf)
-       //     .set { paf_alignment } }
-
-    else {
+       //     .set { paf_alignment } 
+    
+    } else {
         ch_index = Channel.empty()
         paf_alignment = Channel.empty()
         ch_bam = Channel.empty()
