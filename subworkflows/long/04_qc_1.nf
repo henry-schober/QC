@@ -114,7 +114,7 @@ workflow QC_1 {
                 ch_sam = Channel.empty()}
 
     if ( params.longread == true ){
-            SAMTOOLS_INDEX (ch_bam)
+            SAMTOOLS_INDEX (ch_align_bam)
         } else if ( params.shortread == true ){ 
             SAMTOOLS_INDEX (BWAMEM2_MEM.out.bam)}
 
@@ -123,7 +123,7 @@ workflow QC_1 {
         ch_summarytxt = summarytxt.map { file -> tuple(file.baseName, file) }
 
         PYCOQC (
-            ch_summarytxt, ch_bam, SAMTOOLS_INDEX.out.bai
+            ch_summarytxt, ch_align_bam, SAMTOOLS_INDEX.out.bai
         )
         ch_versions = ch_versions.mix(PYCOQC.out.versions)
         } else {
