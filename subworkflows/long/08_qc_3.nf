@@ -8,6 +8,9 @@ include { MERQURY } from '../../modules/nf-core/merqury/main'
 include { SAMTOOLS_INDEX } from '../../modules/nf-core/samtools/index/main' 
 include { BWAMEM2_INDEX } from '../../modules/nf-core/bwamem2/index/main' 
 include { BWAMEM2_MEM } from '../../modules/nf-core/bwamem2/mem/main' 
+include { COMPLEASM } from '../../modules/local/compleasm'  
+include { WINNOWMAP } from '../../modules/local/winnowmap'  
+include { SAMTOOLS_SORT } from '../../modules/nf-core/samtools/sort'
 
 workflow QC_3 {
 
@@ -22,6 +25,7 @@ workflow QC_3 {
         genome_size_est
         ch_meryl
         no_meta_fq
+        meryl_repk
 
     main:
 
@@ -39,17 +43,25 @@ workflow QC_3 {
 
     if ( params.longread == true ){
         // build index
-        MINIMAP2_INDEX(assemblies)
-        ch_versions = ch_versions.mix(MINIMAP2_INDEX.out.versions)
-        ch_index = MINIMAP2_INDEX.out.index
-
         assemblies
             .combine(no_meta_fq)
             .set{align_ch}
 
+        WINNOWMAP(align_ch, meryl_repk, params.kmer_num)
+        ch_sam = WINNOWMAP.out.sam
+
+        SAMTOOLS_SORT(ch_sam)
+        ch_bam = SAMTOOLS_SORT.out.bam
+
+        ch_index = Channel.empty()
+        
+        //MINIMAP2_INDEX(assemblies)
+        //ch_versions = ch_versions.mix(MINIMAP2_INDEX.out.versions)
+        //ch_index = MINIMAP2_INDEX.out.index
         // align reads
-        MINIMAP2_ALIGN(align_ch, params.bam_format, params.cigar_paf_format, params.cigar_bam)
-        ch_bam = MINIMAP2_ALIGN.out.bam }
+        //MINIMAP2_ALIGN(align_ch, params.bam_format, params.cigar_paf_format, params.cigar_bam)
+        //ch_bam = MINIMAP2_ALIGN.out.bam 
+    }
     else {
         ch_index = Channel.empty() 
         ch_bam = Channel.empty() 
@@ -64,22 +76,32 @@ workflow QC_3 {
             .set { ch_quast }
         ch_versions = ch_versions.mix(QUAST.out.versions)
 
-        // run BUSCO
-        BUSCO(assemblies, params.busco_lineage, [], [])
-        ch_busco
-            .concat(BUSCO.out.short_summaries_txt)
-            .set { ch_busco }
+        // run BUSCO or compleasm
+        if (params.busco == true){
+            BUSCO(assemblies, params.busco_lineage, [], [])
+            ch_busco
+                .concat(BUSCO.out.short_summaries_txt)
+                .set { ch_busco } 
+            ch_busco_full_table = BUSCO.out.full_table
+            ch_versions = ch_versions.mix(BUSCO.out.versions)
+        }
 
-        ch_busco_full_table = BUSCO.out.full_table
+        if (params.compleasm == true){
+            COMPLEASM(assemblies, params.lineage)
+            ch_busco 
+                .concat(COMPLEASM.out.txt)
+                .set { ch_busco } 
+            if (params.busco == false){
+                ch_busco_full_table = Channel.empty() 
+            }
+        }
 
-        ch_versions = ch_versions.mix(BUSCO.out.versions)
-
-    if ( params.longread == true ){
-        SAMTOOLS_INDEX (MINIMAP2_ALIGN.out.bam)
-        ch_sam = SAMTOOLS_INDEX.out.sam
-    } else if ( params.shortread == true ){ 
-        SAMTOOLS_INDEX (BWAMEM2_MEM.out.bam)
-        ch_sam = SAMTOOLS_INDEX.out.sam }
+    //if ( params.longread == true ){
+    //    SAMTOOLS_INDEX (MINIMAP2_ALIGN.out.bam)
+    //    ch_sam = SAMTOOLS_INDEX.out.sam
+   // } else if ( params.shortread == true ){ 
+    //    SAMTOOLS_INDEX (BWAMEM2_MEM.out.bam)
+    //    ch_sam = SAMTOOLS_INDEX.out.sam }
 
         if ( params.summary_txt_file == true ) {
         ch_summarytxt = summarytxt.map { file -> tuple(file.baseName, file) }
