@@ -144,7 +144,7 @@ workflow QC_1 {
         ch_merqury = MERQURY.out.assembly_qv
 
     emit:
-        ch_index 
+        ch_index = SAMTOOLS_INDEX.out.bai
         ch_align_bam
         ch_align_paf
         ch_quast
