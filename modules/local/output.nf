@@ -14,7 +14,7 @@ process OUTPUT {
     echo -ne "quast output\n" >> \$prefix.assemblyStats.txt
     less $ch_quast_tsv >> \$prefix.assemblyStats.txt
 
-    echo -ne "\n busco score\n" >> \$prefix.assemblyStats.txt
+    echo -ne "\n completeness score\n" >> \$prefix.assemblyStats.txt
     grep -A 17 'Results:' $ch_busco >> \$prefix.assemblyStats.txt
 
     echo -ne "merqury quality score\n" >> \$prefix.assemblyStats.txt
