@@ -39,14 +39,15 @@ workflow QC_1 {
         }
 
         if (params.longread == true){
-        // build index
-        MINIMAP2_INDEX(assemblies)
-        ch_versions = ch_versions.mix(MINIMAP2_INDEX.out.versions)
-        ch_index = MINIMAP2_INDEX.out.index
 
         assemblies
             .combine(no_meta_fq)
             .set{align_ch}
+
+        // build index
+        //MINIMAP2_INDEX(assemblies)
+        //ch_versions = ch_versions.mix(MINIMAP2_INDEX.out.versions)
+        //ch_index = MINIMAP2_INDEX.out.index
 
         // align reads
         // MINIMAP2_ALIGN(align_ch, params.bam_format, params.cigar_paf_format, params.cigar_bam)
@@ -64,8 +65,6 @@ workflow QC_1 {
             .combine(fastq_no_meta)
             .set{ch_combo}
         
-
-
         } else {ch_combo = Channel.empty()
                 ch_index = Channel.empty()
                 ch_align_paf = Channel.empty()}
