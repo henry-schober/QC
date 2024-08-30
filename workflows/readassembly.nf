@@ -488,17 +488,17 @@ workflow GENOMEASSEMBLY {
     if ( params.purge == true ) {
         if ( params.shortread == true && params.longread == true) {
             if (params.PacBioHifi_lr == true) {
-                QC_3 (purged_assemblies_common, ch_PacBiolongreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], no_meta_ch_PB)
+                QC_3 (purged_assemblies_common, ch_PacBiolongreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], no_meta_ch_PB, QC_1.out[11])
             } else {
-            QC_3 (purged_assemblies_common, ch_PacBiolongreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], no_meta_ch_ONT)}
+            QC_3 (purged_assemblies_common, ch_PacBiolongreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], no_meta_ch_ONT, QC_1.out[11])}
     ch_versions = ch_versions.mix(QC_3.out.versions)
     } else if ( params.longread == true && params.shortread == false) {
         if(params.PacBioHifi_lr == true){
-            QC_3 (purged_assemblies_common, ch_PacBiolongreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, [], full_size, QC_1.out[7], no_meta_ch_PB)
+            QC_3 (purged_assemblies_common, ch_PacBiolongreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, [], full_size, QC_1.out[7], no_meta_ch_PB, QC_1.out[11])
         } else {
-            QC_3 (purged_assemblies_common, ch_PacBiolongreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, [], full_size, QC_1.out[7], no_meta_ch_ONT)}
+            QC_3 (purged_assemblies_common, ch_PacBiolongreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, [], full_size, QC_1.out[7], no_meta_ch_ONT, QC_1.out[11])}
     } else if ( params.shortread == true && params.longread == false) {
-        QC_3 (purged_assemblies_common, READ_QC2.out[0], ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], [])
+        QC_3 (purged_assemblies_common, READ_QC2.out[0], ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], [], QC_1.out[11])
     } 
     busco_tsv
         .concat(QC_3.out[5]) 
@@ -528,18 +528,18 @@ workflow GENOMEASSEMBLY {
         final_assemblies = SCAFFOLD.out[0]
         if ( params.shortread == true && params.longread == true ) {
             if(params.PacBioHifi_lr == true){
-            QC_4 (SCAFFOLD.out[0], ch_longreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], no_meta_ch_PB)
+            QC_4 (SCAFFOLD.out[0], ch_longreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], no_meta_ch_PB, QC_1.out[11])
             } else {
-            QC_4 (SCAFFOLD.out[0], ch_longreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], no_meta_ch_ONT)}
+            QC_4 (SCAFFOLD.out[0], ch_longreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], no_meta_ch_ONT, QC_1.out[11])}
 
         } else if ( params.longread == true && params.shortread == false ) {
             if(params.PacBioHifi_lr == true){
-            QC_4 (SCAFFOLD.out[0], ch_longreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, [], full_size, QC_1.out[7], no_meta_ch_PB)
+            QC_4 (SCAFFOLD.out[0], ch_longreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, [], full_size, QC_1.out[7], no_meta_ch_PB, QC_1.out[11])
             } else {
-            QC_4 (SCAFFOLD.out[0], ch_longreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, [], full_size, QC_1.out[7], no_meta_ch_ONT)}
+            QC_4 (SCAFFOLD.out[0], ch_longreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, [], full_size, QC_1.out[7], no_meta_ch_ONT, QC_1.out[11])}
 
         } else if ( params.shortread == true && params.longread == false ) {
-            QC_4 (SCAFFOLD.out[0], READ_QC2.out[0], ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], []) }
+            QC_4 (SCAFFOLD.out[0], READ_QC2.out[0], ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], [], QC_1.out[11]) }
 
         busco_tsv
             .concat(QC_4.out[5]) 
