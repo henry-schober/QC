@@ -12,7 +12,7 @@ process COMPLEASM {
     val lineage
 
     output:
-    tuple val(meta), path('${prefix}/*.txt')  , emit: txt
+    tuple val(meta), path('compleasm*/*.txt')  , emit: txt
 
     when:
     task.ext.when == null || task.ext.when
@@ -23,6 +23,6 @@ process COMPLEASM {
 
     """
     compleasm download $lineage
-    compleasm run -t $task.cpus -l $lineage -a $assembly -o ${prefix} 
+    compleasm run -t $task.cpus -l $lineage -a $assembly -o compleasm_${prefix} 
     """
 }
