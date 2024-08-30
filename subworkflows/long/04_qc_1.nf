@@ -115,10 +115,8 @@ workflow QC_1 {
 
     if ( params.longread == true ){
             SAMTOOLS_INDEX (ch_bam)
-            ch_sam = SAMTOOLS_INDEX.out.sam
         } else if ( params.shortread == true ){ 
-            SAMTOOLS_INDEX (BWAMEM2_MEM.out.bam)
-            ch_sam = SAMTOOLS_INDEX.out.sam}
+            SAMTOOLS_INDEX (BWAMEM2_MEM.out.bam)}
 
     if ( params.summary_txt_file == true ) {
         // create summary txt channel with meta id and run pycoQC
