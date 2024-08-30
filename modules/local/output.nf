@@ -9,8 +9,8 @@ process OUTPUT {
    
     script: 
     def prefix 
-    def busco_compleasm = "${ch_busco}"
-    def auto_busco = busco_compleasm_name.contains('summary.txt') ? 'cat $ch_busco >> \$prefix.assemblyStats.txt' : 'grep -A 17 'Results:' $ch_busco >> \$prefix.assemblyStats.txt'
+    def completeness = "${ch_busco}"
+    def auto_busco = completeness_name.contains('summary.txt') ? 'cat $ch_busco >> \$prefix.assemblyStats.txt' : 'grep -A 17 'Results:' $ch_busco >> \$prefix.assemblyStats.txt'
     """
     prefix=\$(awk 'NR==1 {print \$2}' $ch_quast_tsv)
     echo -ne "quast output\n" >> \$prefix.assemblyStats.txt
