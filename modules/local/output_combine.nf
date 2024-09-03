@@ -5,7 +5,7 @@ process OUTPUT_COMBINE {
     path(files)
 
     output:
-    path("assemblyStats.txt")       , emit: assemblyStats
+    path("all_assemblyStats.txt")       , emit: assemblyStats
    
     script: 
     def prefix
