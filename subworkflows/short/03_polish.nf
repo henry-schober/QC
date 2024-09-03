@@ -10,13 +10,14 @@ workflow POLISH2 {
 
     ch_versions = Channel.empty() 
 
+    if(params.polca == true){
         println "polishing assemblies with short reads using POLCA!"
 
         flye_assembly
             .combine(shortreads)
             .set{ch_polca}
 
-        POLCA (ch_polca)
+        POLCA (ch_polca) } else { flye_assembly_polished = Channel.empty()}
 
 
     emit:
