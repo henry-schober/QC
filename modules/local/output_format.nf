@@ -5,7 +5,7 @@ process OUTPUT_FORMAT {
     path(input_file)
 
     output:
-    path("qc.tsv")       , emit: tsv
+    path("*qc.tsv")       , emit: tsv
    
     script: 
     def prefix = task.ext.prefix ?: "${meta.id}"
