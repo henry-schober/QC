@@ -52,6 +52,7 @@ include { FORMAT } from '../modules/local/format_genome_size'
 include { EXTRACT_LR } from '../modules/local/extract_genome_size'
 include { EXTRACT_SR } from '../modules/local/extract_short_genome_size'
 include { EXTRACT_PB } from '../modules/local/extract_pb_genome_size'
+include { PILON } from '../modules/nf-core/pilon' 
 
 // SUBWORKFLOWS
 include { INPUT_CHECK } from '../subworkflows/long/01_input_check'
@@ -357,6 +358,14 @@ workflow GENOMEASSEMBLY {
 
 
     //polish assemblies
+
+    if (params.pilon == true){
+        ASSEMBLY.out[0]
+            .join(QC_1.out[1])
+            .set{ch_pilon}
+        PILON(ch_pilon)
+    }
+
      if ( params.longread == true) {
         if ( params.medaka_polish == true || params.racon_polish == true){
             if (params.PacBioHifi_lr == true && params.ONT_lr == true){
@@ -377,14 +386,20 @@ workflow GENOMEASSEMBLY {
     } else {
         medaka_racon_polish = Channel.empty()
     }
+
+
+
     //align assemblies to short reads and polish with POLCA if short reads are available
-    if ( params.longread == true && params.shortread == true) {
+    if ( params.longread == true && params.shortread == true && params.polca == true) {
         if (params.medaka_polish == true || params.racon_polish == true){
             POLISH2 (lr_polish_meta, READ_QC2.out[4])
+        } else if (params.pilon == true){
+            POLISH2 (PILON.out.improved_assembly, READ_QC2.out[4])
         } else {
             POLISH2 (ASSEMBLY.out[0], READ_QC2.out[4])
         }
         POLISH2.out[0]
+            .concat(PILON.out.improved_assembly)
             .set{sr_polish}
 
         sr_polish
@@ -408,7 +423,7 @@ workflow GENOMEASSEMBLY {
 
 
     }
-
+    
     all_assemblies_nm
         .concat(medaka_racon_polish, sr_polish)
         .flatten()
