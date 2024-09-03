@@ -8,9 +8,7 @@ process PILON {
         'biocontainers/pilon:1.24--hdfd78af_0' }"
 
     input:
-    tuple val(meta), path(fasta)
-    tuple val(meta_bam), path(bam), path(bai)
-    val pilon_mode
+    tuple val(meta), path(fasta), path(bam)
 
     output:
     tuple val(meta), path("*.fasta") , emit: improved_assembly
@@ -26,15 +24,13 @@ process PILON {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def valid_mode = ["frags", "jumps", "unpaired", "bam"]
-    if ( !valid_mode.contains(pilon_mode) )  { error "Unrecognised mode to run Pilon. Options: ${valid_mode.join(', ')}" }
     """
     pilon \\
         --genome $fasta \\
         --output ${meta.id} \\
         --threads $task.cpus \\
         $args \\
-        --$pilon_mode $bam
+        --bam $bam
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
