@@ -633,9 +633,11 @@ workflow GENOMEASSEMBLY {
         ch_busco = QC_2.out[4]
         ch_merqury = QC_2.out[5]
     } else {
+        println "output generating!"
         ch_quast = QC_1.out[3]
         ch_busco = QC_1.out[4]
         ch_merqury = QC_1.out[5]
+
     }
 
     bam_1
