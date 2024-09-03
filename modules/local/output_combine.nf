@@ -14,7 +14,7 @@ process OUTPUT_COMBINE {
     {
         # First pass: Calculate the maximum length for each column
         for (i = 1; i <= NF; i++) {
-            len = length($i)
+            len = length(\$i)
             if (len > max_lengths[i]) {
                 max_lengths[i] = len
             }
@@ -22,7 +22,7 @@ process OUTPUT_COMBINE {
 
         # Store the line fields for printing in the END block
         for (i = 1; i <= NF; i++) {
-            lines[NR, i] = $i
+            lines[NR, i] = \$i
         }
     }
 
