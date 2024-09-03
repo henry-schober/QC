@@ -10,19 +10,35 @@ process OUTPUT_COMBINE {
     script: 
     def prefix
     """
-        paste $files | awk '
+    paste $files | awk '
+    BEGIN { FS="\t"; OFS="\t" }
+
     {
-        # Calculate the maximum length of the first column
-        max_length = 0
-        for (i = 1; i <= NF; i+=2) {
-            if (length(\$i) > max_length) max_length = length(\$i)
+        # Determine the number of fields (columns) in the current row
+        num_fields = NF
+
+        # Calculate the maximum width needed for each field
+        for (i = 1; i <= num_fields; i++) {
+            field_length = length($i)
+            if (field_length > max_lengths[i]) {
+                max_lengths[i] = field_length
+            }
         }
 
-        # Print the first column with the necessary padding, followed by the second column
-        for (i = 1; i <= NF; i+=2) {
-            printf "%-*s\t", max_length + 1, \$i
-            if (i+1 <= NF) print \$(i+1)
-            else print ""
+        # Store each line's fields for later printing
+        for (i = 1; i <= num_fields; i++) {
+            lines[NR, i] = $i
+        }
+    }
+
+    END {
+        # Print the lines with properly aligned columns
+        for (j = 1; j <= NR; j++) {
+            for (i = 1; i <= num_fields; i++) {
+                # Calculate padding needed for each column
+                printf "%-*s", max_lengths[i] + 2, lines[j, i]
+            }
+            print ""
         }
     }' > all_assemblyStats.txt
     """
