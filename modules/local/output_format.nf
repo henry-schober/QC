@@ -2,7 +2,7 @@ process OUTPUT_FORMAT {
     label 'process_low'
 
     input:
-    path(input_file)
+    tuple val(meta), path(input_file)
 
     output:
     path("*qc.tsv")       , emit: tsv
