@@ -10,6 +10,20 @@ process OUTPUT_COMBINE {
     script: 
     def prefix
     """
-    paste -d '\\t\\t' $files > all_assemblyStats.txt
+        paste $files | awk '
+    {
+        # Calculate the maximum length of the first column
+        max_length = 0
+        for (i = 1; i <= NF; i+=2) {
+            if (length($i) > max_length) max_length = length($i)
+        }
+
+        # Print the first column with the necessary padding, followed by the second column
+        for (i = 1; i <= NF; i+=2) {
+            printf "%-*s\t", max_length + 1, $i
+            if (i+1 <= NF) print $(i+1)
+            else print ""
+        }
+    }' > all_assemblyStats.txt
     """
 }
