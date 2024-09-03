@@ -23,7 +23,7 @@ l50=\$(grep -m 1 "L50" "$input_file" | awk '{print \$2}')
 l90=\$(grep -m 1 "L90" "$input_file" | awk '{print \$2}')
 ns_per_100kbp=\$(grep -m 1 "# N's per 100 kbp" "$input_file" | awk '{print \$6}')
 
-busco_stats=\$(grep "C:" "$input_file" | awk '{print $1}')
+busco_stats=\$(grep "C:" "$input_file" | awk '{print \$1}')
 complete_buscos=\$(grep "Complete BUSCOs" "$input_file" | awk '{print \$1}')
 single_copy_buscos=\$(grep "single-copy BUSCOs" "$input_file" | awk '{print \$1}')
 duplicated_buscos=\$(grep "duplicated BUSCOs" "$input_file" | awk '{print \$1}')
