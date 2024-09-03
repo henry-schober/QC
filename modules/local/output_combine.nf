@@ -10,6 +10,6 @@ process OUTPUT_COMBINE {
     script: 
     def prefix
     """
-    paste -d '\\t\\t' $files > all_assemblyStats.txt
+    paste -d '\\t\\t\\t' $files > all_assemblyStats.txt
     """
 }
