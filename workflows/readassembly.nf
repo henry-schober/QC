@@ -39,6 +39,7 @@ if (params.input) { ch_input = file(params.input) }
 include { CAT } from '../modules/local/cat' 
 include { OUTPUT } from '../modules/local/output' 
 include { OUTPUT_COMBINE } from '../modules/local/output_combine' 
+include { OUTPUT_FORMAT } from '../modules/local/output_format' 
 include { TOTAL_BASES_SR } from '../modules/local/total_bases_sr' 
 include { TOTAL_BASES_LR } from '../modules/local/total_bases_lr' 
 include { COVERAGE_SR } from '../modules/local/coverage_sr'
@@ -636,7 +637,9 @@ workflow GENOMEASSEMBLY {
     OUTPUT (ch_output)
     assembly_stats  =   OUTPUT.out.assemblyStats
 
-    assembly_stats
+    OUTPUT_FORMAT(OUTPUT.out.assemblyStats)
+
+    OUTPUT_FORMAT.out.tsv
         .collect(sort: true)
         .set{combo_stats}
 
