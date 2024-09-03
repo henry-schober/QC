@@ -10,32 +10,27 @@ process OUTPUT_COMBINE {
     script: 
     def prefix
     """
-    paste $files | awk '
-    BEGIN { FS="\t"; OFS="\t" }
-
+        paste $files | awk '
     {
-        # Determine the number of fields (columns) in the current row
-        num_fields = NF
-
-        # Calculate the maximum width needed for each field
-        for (i = 1; i <= num_fields; i++) {
-            field_length = length($i)
-            if (field_length > max_lengths[i]) {
-                max_lengths[i] = field_length
+        # First pass: Calculate the maximum length for each column
+        for (i = 1; i <= NF; i++) {
+            len = length($i)
+            if (len > max_lengths[i]) {
+                max_lengths[i] = len
             }
         }
 
-        # Store each line's fields for later printing
-        for (i = 1; i <= num_fields; i++) {
+        # Store the line fields for printing in the END block
+        for (i = 1; i <= NF; i++) {
             lines[NR, i] = $i
         }
     }
 
     END {
-        # Print the lines with properly aligned columns
+        # Second pass: Print each line with padded columns
         for (j = 1; j <= NR; j++) {
-            for (i = 1; i <= num_fields; i++) {
-                # Calculate padding needed for each column
+            for (i = 1; i <= NF; i++) {
+                # Print the column with padding for alignment
                 printf "%-*s", max_lengths[i] + 2, lines[j, i]
             }
             print ""
