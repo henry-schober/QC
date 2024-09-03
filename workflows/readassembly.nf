@@ -364,12 +364,15 @@ workflow GENOMEASSEMBLY {
             .join(QC_1.out[1])
             .set{ch_pilon}
         PILON(ch_pilon)
+        ch_polish_pilon = PILON.out.improved_assembly
         ASSEMBLY.out[4]
-            .concat(PILON.out.improved_assembly)
+            .concat(ch_polish_pilon)
             .flatten()
             .map { file -> tuple(id: file.simpleName, file) }
             .set { for_lr_polishing }
-    } else {ASSEMBLY.out[0].set{for_lr_polishing}}
+    } else {
+        ASSEMBLY.out[0].set{for_lr_polishing}
+        ch_polish_pilon = Channel.empty()}
 
      if ( params.longread == true) {
         if ( params.medaka_polish == true || params.racon_polish == true){
@@ -404,7 +407,7 @@ workflow GENOMEASSEMBLY {
             POLISH2 (ASSEMBLY.out[0], READ_QC2.out[4])
         }
         POLISH2.out[0]
-            .concat(PILON.out.improved_assembly)
+            .concat(ch_polish_pilon)
             .set{sr_polish}
 
         sr_polish
@@ -419,14 +422,20 @@ workflow GENOMEASSEMBLY {
             .set { polished_assemblies }
 
     ch_versions = ch_versions.mix(POLISH2.out.versions)
+    } else if (params.pilon == true){
+        if(params.shortread == true){
+            ch_polish_pilon.set{sr_polish}}
+        medaka_racon_polish
+            .concat(ch_polish_pilon)
+            .flatten()
+            .map { file -> tuple(id: file.baseName, file) }
+            .set { polished_assemblies }
     } else {
         sr_polish   = Channel.empty()
         medaka_racon_polish
             .flatten()
             .map { file -> tuple(id: file.baseName, file) }
             .set { polished_assemblies }
-
-
     }
     
     all_assemblies_nm
