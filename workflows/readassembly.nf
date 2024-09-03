@@ -363,7 +363,7 @@ workflow GENOMEASSEMBLY {
         ASSEMBLY.out[0]
             .join(QC_1.out[1])
             .set{ch_pilon}
-
+        println "polishing assemblies with pilon!"
         PILON(ch_pilon)
         ch_polish_pilon = PILON.out.improved_assembly
         ch_polish_pilon
