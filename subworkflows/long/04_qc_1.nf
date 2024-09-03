@@ -110,7 +110,6 @@ workflow QC_1 {
                 .set{racon} 
  
         } else {racon = Channel.empty()
-                ch_align_bam = Channel.empty()
                 ch_sam = Channel.empty()}
 
     if ( params.longread == true ){
