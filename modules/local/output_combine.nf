@@ -5,11 +5,11 @@ process OUTPUT_COMBINE {
     path(files)
 
     output:
-    path("all_assemblyStats.txt")       , emit: assemblyStats
+    path("all_assemblyStats.tsv")       , emit: assemblyStats
    
     script: 
     def prefix
     """
-    join -1 1 -2 2 $files -t \$'\\t'> all_assemblyStats.txt
+    join -1 1 -2 2 $files -t \$'\\t'> all_assemblyStats.tsv
     """
 }
