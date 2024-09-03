@@ -10,6 +10,6 @@ process OUTPUT_COMBINE {
     script: 
     def prefix
     """
-    join $files -t \$'\\t'> all_assemblyStats.tsv
+    join -t \$'\\t' $files >> all_assemblyStats.tsv
     """
 }
