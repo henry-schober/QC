@@ -364,16 +364,21 @@ workflow GENOMEASSEMBLY {
             .join(QC_1.out[1])
             .set{ch_pilon}
         PILON(ch_pilon)
-    }
+        ASSEMBLY.out[4]
+            .concat(PILON.out.improved_assembly)
+            .flatten()
+            .map { file -> tuple(id: file.simpleName, file) }
+            .set { for_lr_polishing }
+    } else {ASSEMBLY.out[0].set{for_lr_polishing}}
 
      if ( params.longread == true) {
         if ( params.medaka_polish == true || params.racon_polish == true){
             if (params.PacBioHifi_lr == true && params.ONT_lr == true){
-                POLISH (ASSEMBLY.out[0], ch_PacBiolongreads, params.model, QC_1.out[8], assembly_sam_combo, no_meta_ch_ONT, no_meta_ch_PB)
+                POLISH (for_lr_polishing, ch_PacBiolongreads, params.model, QC_1.out[8], assembly_sam_combo, no_meta_ch_ONT, no_meta_ch_PB)
             } else if (params.PacBioHifi_lr == false && params.ONT_lr == true){
-                POLISH (ASSEMBLY.out[0], ch_ONTlongreads, params.model, QC_1.out[8], assembly_sam_combo, no_meta_ch_ONT, [])
+                POLISH (for_lr_polishing, ch_ONTlongreads, params.model, QC_1.out[8], assembly_sam_combo, no_meta_ch_ONT, [])
             } else if (params.PacBioHifi_lr == true && params.ONT_lr == false){
-                POLISH (ASSEMBLY.out[0], ch_PacBiolongreads, params.model, QC_1.out[8], assembly_sam_combo, [], no_meta_ch_PB)}
+                POLISH (for_lr_polishing, ch_PacBiolongreads, params.model, QC_1.out[8], assembly_sam_combo, [], no_meta_ch_PB)}
 
         POLISH.out[0] 
             .set{medaka_racon_polish}
