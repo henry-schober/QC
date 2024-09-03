@@ -640,8 +640,6 @@ workflow GENOMEASSEMBLY {
         .collect(sort: true)
         .set{combo_stats}
 
-    combo_stats.view{ "Summary txt paths: $it" }
-
     OUTPUT_COMBINE(combo_stats)
 
     //
