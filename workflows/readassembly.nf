@@ -363,8 +363,12 @@ workflow GENOMEASSEMBLY {
         ASSEMBLY.out[0]
             .join(QC_1.out[1])
             .set{ch_pilon}
+
         PILON(ch_pilon)
         ch_polish_pilon = PILON.out.improved_assembly
+        ch_polish_pilon
+            .map { file -> tuple(id: file.baseName, file)  }
+            .set { pilon_meta }  
         ASSEMBLY.out[4]
             .concat(ch_polish_pilon)
             .flatten()
@@ -372,7 +376,8 @@ workflow GENOMEASSEMBLY {
             .set { for_lr_polishing }
     } else {
         ASSEMBLY.out[0].set{for_lr_polishing}
-        ch_polish_pilon = Channel.empty()}
+        ch_polish_pilon = Channel.empty()
+        pilon_meta = Channel.empty()}
 
      if ( params.longread == true) {
         if ( params.medaka_polish == true || params.racon_polish == true){
@@ -402,7 +407,7 @@ workflow GENOMEASSEMBLY {
         if (params.medaka_polish == true || params.racon_polish == true){
             POLISH2 (lr_polish_meta, READ_QC2.out[4])
         } else if (params.pilon == true){
-            POLISH2 (PILON.out.improved_assembly, READ_QC2.out[4])
+            POLISH2 (pilon_meta, READ_QC2.out[4])
         } else {
             POLISH2 (ASSEMBLY.out[0], READ_QC2.out[4])
         }
@@ -423,8 +428,7 @@ workflow GENOMEASSEMBLY {
 
     ch_versions = ch_versions.mix(POLISH2.out.versions)
     } else if (params.pilon == true){
-        if(params.shortread == true){
-            ch_polish_pilon.set{sr_polish}}
+        sr_polish = Channel.empty()
         medaka_racon_polish
             .concat(ch_polish_pilon)
             .flatten()
@@ -444,7 +448,7 @@ workflow GENOMEASSEMBLY {
         .map { file -> tuple(id: file.baseName, file) }
         .set { polished_assemblies_and_no_polish }    
 
-    if ( params.medaka_polish == true || params.racon_polish == true || params.shortread == true) {
+    if ( params.medaka_polish == true || params.racon_polish == true || params.pilon == true || params.polca == true) {
         if ( params.shortread == true && params.longread == true ) {
             if(params.PacBioHifi_lr == true){
                 QC_2 (polished_assemblies, ch_PacBiolongreads, ch_summtxt, QC_1.out[3], QC_1.out[4], QC_1.out[5], READ_QC2.out[0], QC_1.out[2], full_size, QC_1.out[7], no_meta_ch_PB, QC_1.out[11])
