@@ -85,7 +85,7 @@ workflow QC_1 {
         }
 
         if (params.compleasm == true){
-            COMPLEASM(assemblies, params.lineage)
+            COMPLEASM(assemblies, params.compleasm_lineage)
             ch_busco = COMPLEASM.out.txt
             if (params.busco == false){
                 ch_busco_full_table = Channel.empty() 
