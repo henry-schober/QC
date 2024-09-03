@@ -635,11 +635,12 @@ workflow GENOMEASSEMBLY {
         .set{ch_output}
 
     OUTPUT (ch_output)
-    assembly_stats  =   OUTPUT.out.assemblyStats
 
     OUTPUT_FORMAT(OUTPUT.out.assemblyStats)
 
-    OUTPUT_FORMAT.out.tsv
+    assembly_stats  = OUTPUT_FORMAT.out.tsv
+
+    assembly_stats
         .collect(sort: true)
         .set{combo_stats}
 
