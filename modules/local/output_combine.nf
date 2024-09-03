@@ -10,27 +10,24 @@ process OUTPUT_COMBINE {
     script: 
     def prefix
     """
-        paste $files | awk '
+    paste $files | awk -v OFS="\\t" '
     {
-        # First pass: Calculate the maximum length for each column
+        # Loop through each field (each file content line)
         for (i = 1; i <= NF; i++) {
-            len = length(\$i)
-            if (len > max_lengths[i]) {
-                max_lengths[i] = len
+            # Find the maximum length of the fields across all lines
+            if (length(\$i) > max_lengths[i]) {
+                max_lengths[i] = length(\$i)
             }
-        }
-
-        # Store the line fields for printing in the END block
-        for (i = 1; i <= NF; i++) {
+            # Store the field in the lines array
             lines[NR, i] = \$i
         }
     }
 
     END {
-        # Second pass: Print each line with padded columns
+        # Print each line with adjusted padding
         for (j = 1; j <= NR; j++) {
             for (i = 1; i <= NF; i++) {
-                # Print the column with padding for alignment
+                # Print each field (column) with proper padding
                 printf "%-*s", max_lengths[i] + 2, lines[j, i]
             }
             print ""
