@@ -23,7 +23,7 @@ process PILON {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "pilon_${meta.id}"
     """
     pilon \\
         --genome $fasta \\
