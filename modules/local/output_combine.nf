@@ -10,7 +10,7 @@ process OUTPUT_COMBINE {
     script: 
     def prefix
     """
-    paste $files | awk -v OFS="\\t\\t" '
+    paste -d '\\t\\t' $files | awk -v OFS="\\t\\t" '
     {
         # Loop through each field (each file content line)
         for (i = 1; i <= NF; i++) {
