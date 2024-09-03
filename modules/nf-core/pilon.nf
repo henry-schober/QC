@@ -11,7 +11,7 @@ process PILON {
     tuple val(meta), path(fasta), path(bam)
 
     output:
-    tuple val(meta), path("*.fasta") , emit: improved_assembly
+    path("*.fasta") , emit: improved_assembly
     tuple val(meta), path("*.vcf")   , emit: vcf               , optional : true
     tuple val(meta), path("*.change"), emit: change_record     , optional : true
     tuple val(meta), path("*.bed")   , emit: tracks_bed        , optional : true
