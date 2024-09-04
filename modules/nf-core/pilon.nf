@@ -25,9 +25,7 @@ process PILON {
     def reads = "${fasta}"
     def auto_bam_mode = reads.contains('ont') ? '--nanopore' : reads.contains('pb') ? '--pacbio' : '--bam'
     """
-    java -Xmx25G -jar /pilon/pilon.jar
-
-    pilon \\
+    java -Xmx25G -jar /pilon/pilon.jar \\
         --genome $fasta \\
         --output ${meta.id} \\
         --threads $task.cpus \\
