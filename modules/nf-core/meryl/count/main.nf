@@ -13,7 +13,7 @@ process MERYL_COUNT {
 
     output:
     path("*filtered.meryl")           , emit: meryl_db
-    tuple val(meta), path("*.txt")           , emit: repetitive_k
+    path("*.txt")           , emit: repetitive_k
     path "versions.yml"               , emit: versions
 
     when:
