@@ -68,8 +68,7 @@ workflow QC_3 {
         //ch_bam = MINIMAP2_ALIGN.out.bam 
     }
     else {
-        ch_index = Channel.empty() 
-        ch_bam = Channel.empty() 
+        ch_index = Channel.empty()  
     }
         
         // run quast
