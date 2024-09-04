@@ -18,7 +18,7 @@ workflow LENGTH_FILT3 {
             SEQKIT_SEQ(decontam_reads, params.min_readlength)
 
             SEQKIT_SEQ.out.filter
-                .map { file -> tuple([id:file.baseName, single_end:true], file)  }
+                .map { file -> tuple([id:file.simpleName, single_end:true], file)  }
                 .set { longreads }
 
 
