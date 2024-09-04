@@ -355,12 +355,13 @@ workflow GENOMEASSEMBLY {
     busco_tsv = QC_1.out[9]
     bam_1 = QC_1.out[1]
 
-
+    bam_1.view()
+    all_assemblies.view()
 
     //polish assemblies
 
     if (params.pilon == true){
-        ASSEMBLY.out[0]
+        all_assemblies
             .join(QC_1.out[1])
             .set{ch_pilon}
         ch_pilon.view()
