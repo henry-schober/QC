@@ -39,6 +39,7 @@ workflow QC_4 {
             .set{bwa}
 
         BWAMEM2_MEM(bwa, params.samtools_sort)
+        if(params.longread == false){ch_bam = BWAMEM2_MEM.out.bam}
     }
 
     if ( params.longread == true ){
@@ -47,7 +48,11 @@ workflow QC_4 {
             .combine(no_meta_fq)
             .set{align_ch}
 
-        WINNOWMAP(align_ch, meryl_repk, params.kmer_num)
+        align_ch
+            .combine(meryl_repk)
+            .set{winnowmap_ch}
+
+        WINNOWMAP(winnowmap_ch, params.kmer_num)
         ch_sam = WINNOWMAP.out.sam
 
         SAMTOOLS_SORT(ch_sam)
