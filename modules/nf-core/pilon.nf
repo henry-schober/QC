@@ -8,7 +8,7 @@ process PILON {
         'biocontainers/pilon:1.24--hdfd78af_0' }"
 
     input:
-    tuple val(meta), path(fasta), path(bam)
+    tuple val(meta), path(fasta), path(bam), path(bai)
 
     output:
     path("*.fasta") , emit: improved_assembly
