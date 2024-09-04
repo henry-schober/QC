@@ -63,16 +63,6 @@ workflow QC_2 {
 
         paf_alignment = Channel.empty()
         ch_index = Channel.empty()
-        
-        //MINIMAP2_INDEX(polished_assemblies)
-        //ch_versions = ch_versions.mix(MINIMAP2_INDEX.out.versions)
-        //ch_index = MINIMAP2_INDEX.out.index
-
-       // MINIMAP2_ALIGN(align_ch, params.bam_format, params.cigar_paf_format, params.cigar_bam)      
-       // ch_bam = MINIMAP2_ALIGN.out.bam
-       // ch_align_paf
-        //    .concat(MINIMAP2_ALIGN.out.paf)
-       //     .set { paf_alignment } 
     
     } else {
         ch_index = Channel.empty()
@@ -114,16 +104,6 @@ workflow QC_2 {
     } else if ( params.shortread == true ){ 
         SAMTOOLS_INDEX (BWAMEM2_MEM.out.bam) }
 
-    if ( params.summary_txt_file == true ) {
-        ch_summarytxt = summarytxt.map { file -> tuple(file.baseName, file) }
-
-        PYCOQC (
-            ch_summarytxt, ch_bam, SAMTOOLS_INDEX.out.bai
-        )
-        ch_versions = ch_versions.mix(PYCOQC.out.versions)
-    } else {
-            ch_summarytxt = Channel.empty()
-    }
 
         polished_assemblies
             .combine(ch_meryl)
