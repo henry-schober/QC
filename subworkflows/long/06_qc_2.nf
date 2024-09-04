@@ -40,6 +40,7 @@ workflow QC_2 {
             .set{bwa}
 
         BWAMEM2_MEM(bwa, params.samtools_sort)
+        if(params.longread == false){ch_bam = BWAMEM2_MEM.out.bam}
     }
 
     if ( params.longread == true ){
@@ -76,7 +77,6 @@ workflow QC_2 {
     } else {
         ch_index = Channel.empty()
         paf_alignment = Channel.empty()
-        ch_bam = Channel.empty()
         ch_sam = Channel.empty()}   
 
         
