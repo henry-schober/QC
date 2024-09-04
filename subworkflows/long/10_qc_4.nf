@@ -1,8 +1,5 @@
 include { QUAST } from '../../modules/local/quast'  
 include { BUSCO } from '../../modules/nf-core/busco/main' 
-include { PYCOQC } from '../../modules/nf-core/pycoqc/main'  
-include { MINIMAP2_INDEX } from '../../modules/nf-core/minimap2/index/main' 
-include { MINIMAP2_ALIGN } from '../../modules/nf-core/minimap2/align/main'  
 include { MERYL_COUNT } from '../../modules/nf-core/meryl/count/main' 
 include { MERQURY } from '../../modules/nf-core/merqury/main' 
 include { SAMTOOLS_INDEX } from '../../modules/nf-core/samtools/index/main' 
@@ -60,13 +57,6 @@ workflow QC_4 {
 
         ch_index = Channel.empty()
 
-        // build index
-        //MINIMAP2_INDEX(assemblies)
-        //ch_versions = ch_versions.mix(MINIMAP2_INDEX.out.versions)
-        //ch_index = MINIMAP2_INDEX.out.index
-        // align reads
-        //MINIMAP2_ALIGN(align_ch, params.bam_format, params.cigar_paf_format, params.cigar_bam)
-        //ch_bam = MINIMAP2_ALIGN.out.bam
     } else {
         ch_index = Channel.empty() 
     }
@@ -104,17 +94,6 @@ workflow QC_4 {
             SAMTOOLS_INDEX (ch_bam)
         } else if ( params.shortread == true ){ 
             SAMTOOLS_INDEX (BWAMEM2_MEM.out.bam)}
-
-        if ( params.summary_txt_file == true ) {
-        ch_summarytxt = summarytxt.map { file -> tuple(file.baseName, file) }
-
-        PYCOQC (
-            ch_summarytxt, ch_bam, SAMTOOLS_INDEX.out.bai
-        )
-        ch_versions = ch_versions.mix(PYCOQC.out.versions)
-        } else {
-            ch_summarytxt = Channel.empty()
-        }
 
         assemblies
             .combine(ch_meryl)
