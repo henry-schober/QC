@@ -35,8 +35,9 @@ workflow QC_1 {
             .set{bwa}
 
         BWAMEM2_MEM(bwa, params.samtools_sort)
-        ch_align_bam = BWAMEM2_MEM.out.bam
-        }
+        if (params.longread == false){
+            ch_align_bam = BWAMEM2_MEM.out.bam
+        } }
 
         if (params.longread == true){
 
