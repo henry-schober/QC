@@ -9,8 +9,7 @@ process WINNOWMAP {
         'quay.io/biocontainers/winnowmap:2.03--h5b5514e_1' }"
 
     input:
-    tuple val(meta), path(reference), path(reads)
-    tuple val(meta), path(repetitive_txt)
+    tuple val(meta), path(reference), path(reads), path(repetitive_txt)
     val(kmernum)
 
     output:
