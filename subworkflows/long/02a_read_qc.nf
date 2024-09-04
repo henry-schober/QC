@@ -47,7 +47,7 @@ workflow READ_QC {
                  fastq_filt           = SEQKIT_GREP.out.filter
 
                  fastq_filt
-                    .map { file -> tuple([id:file.baseName, single_end:true], file)  }
+                    .map { file -> tuple([id:file.simpleName, single_end:true], file)  }
                     .set { filtered_fastq }
 
                  if( params.rcf_db ){
