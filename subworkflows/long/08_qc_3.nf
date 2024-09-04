@@ -47,7 +47,11 @@ workflow QC_3 {
             .combine(no_meta_fq)
             .set{align_ch}
 
-        WINNOWMAP(align_ch, meryl_repk, params.kmer_num)
+        align_ch
+            .combine(meryl_repk)
+            .set{winnowmap_ch}
+
+        WINNOWMAP(winnowmap_ch, params.kmer_num)
         ch_sam = WINNOWMAP.out.sam
 
         SAMTOOLS_SORT(ch_sam)
