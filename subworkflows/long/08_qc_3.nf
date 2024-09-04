@@ -39,6 +39,7 @@ workflow QC_3 {
             .set{bwa}
 
         BWAMEM2_MEM(bwa, params.samtools_sort)
+        if(params.shortread == false){ch_bam = BWAMEM2_MEM.out.bam}
     }
 
     if ( params.longread == true ){
