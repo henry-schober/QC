@@ -361,9 +361,11 @@ workflow GENOMEASSEMBLY {
 
     if (params.pilon == true){
         all_assemblies
+            .join(QC_1.out[1])
+            .set{ch_pilon_1}
+        ch_pilon_1    
             .join(QC_1.out[0])
             .set{ch_pilon}
-        ch_pilon.view()
         println "polishing assemblies with pilon!"
         PILON(ch_pilon)
         ch_polish_pilon = PILON.out.improved_assembly
