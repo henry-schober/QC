@@ -24,6 +24,8 @@ process PILON {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "pilon_${meta.id}"
+    def reads = "${fasta}"
+    def auto_bam_mode = reads.contains('ont') ? '--nanopore' : reads.contains('pb') ? '--pacbio' : '--bam'
     """
     pilon \\
         --genome $fasta \\
