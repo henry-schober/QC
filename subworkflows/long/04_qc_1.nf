@@ -1,6 +1,5 @@
 include { QUAST } from '../../modules/local/quast'  
 include { BUSCO } from '../../modules/nf-core/busco/main' 
-include { PYCOQC } from '../../modules/nf-core/pycoqc/main'  
 //include { MINIMAP2_INDEX } from '../../modules/nf-core/minimap2/index/main' 
 //include { MINIMAP2_ALIGN } from '../../modules/nf-core/minimap2/align/main'  
 include { MERYL_COUNT } from '../../modules/nf-core/meryl/count/main' 
@@ -122,18 +121,9 @@ workflow QC_1 {
         } else if ( params.shortread == true ){ 
             SAMTOOLS_INDEX (BWAMEM2_MEM.out.bam)}
 
-    if ( params.summary_txt_file == true ) {
-        // create summary txt channel with meta id and run pycoQC
-        ch_summarytxt = summarytxt.map { file -> tuple(file.baseName, file) }
 
-        PYCOQC (
-            ch_summarytxt, ch_align_bam, SAMTOOLS_INDEX.out.bai
-        )
-        ch_versions = ch_versions.mix(PYCOQC.out.versions)
-        } else {
-            ch_summarytxt = Channel.empty()
-        }
-
+        ch_summarytxt = Channel.empty()
+        
         assemblies
             .combine(MERYL_COUNT.out.meryl_db)
             .set{ch_input_merqury}
