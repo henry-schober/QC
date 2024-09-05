@@ -29,7 +29,7 @@ process PILON {
         --genome $fasta \\
         --output ${meta.id} \\
         $args \\
-        --bam $auto_bam_mode
+        $auto_bam_mode $bam
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
