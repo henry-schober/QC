@@ -28,7 +28,6 @@ process PILON {
     java -Xmx500G -jar /pilon/pilon.jar \\
         --genome $fasta \\
         --output ${meta.id} \\
-        --threads $task.cpus \\
         $args \\
         --bam $auto_bam_mode
 
