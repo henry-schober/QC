@@ -30,7 +30,7 @@ process PILON {
         --output ${meta.id} \\
         --threads $task.cpus \\
         $args \\
-        --bam $bam
+        --bam $auto_bam_mode
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
