@@ -8,6 +8,8 @@ include { BWAMEM2_MEM } from '../../modules/nf-core/bwamem2/mem/main'
 include { COMPLEASM } from '../../modules/local/compleasm'  
 include { WINNOWMAP } from '../../modules/local/winnowmap'  
 include { SAMTOOLS_SORT } from '../../modules/nf-core/samtools/sort'
+include { MINIMAP2_INDEX } from '../../modules/nf-core/minimap2/index/main' 
+include { MINIMAP2_ALIGN } from '../../modules/nf-core/minimap2/align/main' 
 
 workflow QC_1 {
 
@@ -91,16 +93,35 @@ workflow QC_1 {
             .set{winnowmap_ch}
 
         if (params.longread == true){
+            if(params.winnowmap == true){
             WINNOWMAP(winnowmap_ch, params.kmer_num)
-            ch_sam = WINNOWMAP.out.sam
+            ch_sam = WINNOWMAP.out.sam 
 
             SAMTOOLS_SORT(ch_sam)
-            ch_align_bam = SAMTOOLS_SORT.out.bam
+            ch_align_bam = SAMTOOLS_SORT.out.bam 
+            ch_align_paf = Channel.empty()}
+
+            if(params.minimap2 == true){
+            MINIMAP2_INDEX(assemblies)
+            ch_versions = ch_versions.mix(MINIMAP2_INDEX.out.versions)
+            ch_index = MINIMAP2_INDEX.out.index
+
+            assemblies
+                .combine(no_meta_fq)
+                .set{align_ch}
+
+            // align reads
+            MINIMAP2_ALIGN(align_ch, params.bam_format, params.cigar_paf_format, params.cigar_bam)
+            ch_align_bam = MINIMAP2_ALIGN.out.bam
+            ch_align_paf = MINIMAP2_ALIGN.out.paf
+
+            SAMTOOLS_INDEX (MINIMAP2_ALIGN.out.bam)
+            ch_sam = SAMTOOLS_INDEX.out.sam }
 
             ch_combo
                 .join(ch_sam)
                 .set{racon} 
- 
+
         } else {racon = Channel.empty()
                 ch_sam = Channel.empty()}
 
