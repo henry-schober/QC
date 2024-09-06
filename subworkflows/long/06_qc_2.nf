@@ -50,31 +50,26 @@ workflow QC_2 {
 
         align_ch
             .combine(meryl_repk)
-            .set{winnowmap_ch}
+            .set{winnowmap_ch}   }    
+  
+    // run quast
+    QUAST(
+        polished_assemblies
+    )
+    ch_quast
+        .concat(QUAST.out.results)
+        .set { ch_quast }
+    ch_versions = ch_versions.mix(QUAST.out.versions)
 
-        
-    
-    }    
-
-        
-        // run quast
-        QUAST(
-            polished_assemblies
-        )
-        ch_quast
-            .concat(QUAST.out.results)
-            .set { ch_quast }
-        ch_versions = ch_versions.mix(QUAST.out.versions)
-
-        // run BUSCO or compleasm
-        if (params.busco == true){
-            BUSCO(polished_assemblies, params.busco_lineage, [], [])
-            ch_busco
-                .concat(BUSCO.out.short_summaries_txt)
-                .set { ch_busco } 
-            ch_busco_full_table = BUSCO.out.full_table
-            ch_versions = ch_versions.mix(BUSCO.out.versions)
-        }
+    // run BUSCO or compleasm
+    if (params.busco == true){
+        BUSCO(polished_assemblies, params.busco_lineage, [], [])
+        ch_busco
+            .concat(BUSCO.out.short_summaries_txt)
+            .set { ch_busco } 
+        ch_busco_full_table = BUSCO.out.full_table
+        ch_versions = ch_versions.mix(BUSCO.out.versions)
+    }
 
         if (params.compleasm == true){
             COMPLEASM(polished_assemblies, params.compleasm_lineage)
