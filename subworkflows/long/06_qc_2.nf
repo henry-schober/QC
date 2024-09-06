@@ -42,8 +42,6 @@ workflow QC_2 {
 
     if ( params.longread == true ){
         
-        // build index
-        
         polished_assemblies
             .combine(no_meta_fq)
             .set{align_ch}
@@ -52,19 +50,9 @@ workflow QC_2 {
             .combine(meryl_repk)
             .set{winnowmap_ch}
 
-        WINNOWMAP(winnowmap_ch, params.kmer_num)
-        ch_sam = WINNOWMAP.out.sam
-
-        SAMTOOLS_SORT(ch_sam)
-        ch_bam = SAMTOOLS_SORT.out.bam
-
-        paf_alignment = Channel.empty()
-        ch_index = Channel.empty()
+        
     
-    } else {
-        ch_index = Channel.empty()
-        paf_alignment = Channel.empty()
-        ch_sam = Channel.empty()}   
+    }    
 
         
         // run quast
@@ -96,6 +84,42 @@ workflow QC_2 {
             }
         }
 
+        if (params.longread == true){
+            if(params.winnowmap == true){
+
+            WINNOWMAP(winnowmap_ch, params.kmer_num)
+            ch_sam = WINNOWMAP.out.sam
+
+            SAMTOOLS_SORT(ch_sam)
+            ch_bam = SAMTOOLS_SORT.out.bam
+
+            paf_alignment = Channel.empty()
+            ch_index = Channel.empty() }
+
+            
+            
+            if(params.minimap2 == true){
+
+            MINIMAP2_INDEX(polished_assemblies)
+            ch_versions = ch_versions.mix(MINIMAP2_INDEX.out.versions)
+            ch_index = MINIMAP2_INDEX.out.index
+
+            // align reads
+            MINIMAP2_ALIGN(align_ch, params.bam_format, params.cigar_paf_format, params.cigar_bam)
+        
+            ch_bam = MINIMAP2_ALIGN.out.bam
+
+            ch_align_paf
+                .concat(MINIMAP2_ALIGN.out.paf)
+                .set { paf_alignment } 
+        
+            SAMTOOLS_INDEX (MINIMAP2_ALIGN.out.bam)
+            ch_sam = SAMTOOLS_INDEX.out.sam }
+
+
+        } else {paf_alignment = Channel.empty()
+                ch_sam = Channel.empty() }
+
     if ( params.longread == true ){
         SAMTOOLS_INDEX (ch_bam)
     } else if ( params.shortread == true ){ 
@@ -119,7 +143,7 @@ workflow QC_2 {
         ch_versions = ch_versions.mix(MERQURY.out.versions)
 
     emit:
-        ch_index
+        ch_index = SAMTOOLS_INDEX.out.bai
         ch_bam
         paf_alignment
         ch_quast
