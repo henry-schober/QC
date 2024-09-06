@@ -8,6 +8,8 @@ include { BWAMEM2_MEM } from '../../modules/nf-core/bwamem2/mem/main'
 include { COMPLEASM } from '../../modules/local/compleasm'  
 include { WINNOWMAP } from '../../modules/local/winnowmap'  
 include { SAMTOOLS_SORT } from '../../modules/nf-core/samtools/sort'
+include { MINIMAP2_INDEX } from '../../modules/nf-core/minimap2/index/main' 
+include { MINIMAP2_ALIGN } from '../../modules/nf-core/minimap2/align/main' 
 
 workflow QC_4 {
 
@@ -49,14 +51,23 @@ workflow QC_4 {
             .combine(meryl_repk)
             .set{winnowmap_ch}
 
+        if(params.winnowmap == true){
         WINNOWMAP(winnowmap_ch, params.kmer_num)
         ch_sam = WINNOWMAP.out.sam
 
         SAMTOOLS_SORT(ch_sam)
-        ch_bam = SAMTOOLS_SORT.out.bam
+        ch_bam = SAMTOOLS_SORT.out.bam 
 
-        ch_index = Channel.empty()
+        ch_index = Channel.empty() }
 
+        if(params.minimap2 == true){
+        MINIMAP2_INDEX(assemblies)
+        ch_versions = ch_versions.mix(MINIMAP2_INDEX.out.versions)
+        ch_index = MINIMAP2_INDEX.out.index
+
+        // align reads
+        MINIMAP2_ALIGN(align_ch, params.bam_format, params.cigar_paf_format, params.cigar_bam)
+        ch_bam = MINIMAP2_ALIGN.out.bam } 
     } else {
         ch_index = Channel.empty() 
     }
@@ -112,7 +123,7 @@ workflow QC_4 {
         ch_versions = ch_versions.mix(MERQURY.out.versions)
 
     emit:
-        ch_index
+        ch_index = = SAMTOOLS_INDEX.out.bai
         ch_quast
         ch_busco
         ch_merqury
