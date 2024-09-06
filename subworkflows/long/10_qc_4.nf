@@ -123,7 +123,7 @@ workflow QC_4 {
         ch_versions = ch_versions.mix(MERQURY.out.versions)
 
     emit:
-        ch_index = = SAMTOOLS_INDEX.out.bai
+        ch_index = SAMTOOLS_INDEX.out.bai
         ch_quast
         ch_busco
         ch_merqury
