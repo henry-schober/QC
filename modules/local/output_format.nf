@@ -41,27 +41,7 @@ merqury_score=\$(sed -n '46p' "$input_file" | awk '{print \$1}')
 
 
 # Output the formatted results
-{
-echo -e "Assembly\t\$assembly" 
-echo -e "Number of contigs\t\$contigs" 
-echo -e "Largest contig\t\$largest_contig" 
-echo -e "Total length\t\$total_length" 
-echo -e "GC (%)\t\$gc_percent" 
-echo -e "N50\t\$n50" 
-echo -e "N90\t\$n90" 
-echo -e "auN\t\$aun" 
-echo -e "L50\t\$l50" 
-echo -e "L90\t\$l90" 
-echo -e "# N's per 100 kbp\t\$ns_per_100kbp" 
-echo 
-echo -e "BUSCO\tC:\$(echo \$complete_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%[S:\$(echo \$single_copy_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%,D:\$(echo \$duplicated_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%],F:\$(echo \$fragmented_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%,M:\$(echo \$missing_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%,n:\$total_buscos" 
-echo -e "Complete and single-copy BUSCOs (S)\t\$single_copy_buscos"
-echo -e "Complete and duplicated BUSCOs (D)\t\$duplicated_buscos"
-echo -e "Fragmented BUSCOs (F)\t\$fragmented_buscos"
-echo -e "Missing BUSCOs (M)\t\$missing_buscos" 
-echo -e "Total BUSCO groups searched\t\$total_buscos" 
-echo
-echo -e "Merqury quality value\t\$merqury_score" } >> ${prefix}_qc.tsv
+echo -e "Assembly\t$assembly\nNumber of contigs\t$contigs\nLargest contig\t$largest_contig\nTotal length\t$total_length\nGC (%)\t$gc_percent\nN50\t$n50\nN90\t$n90\nauN\t$aun\nL50\t$l50\nL90\t$l90\n# N's per 100 kbp\t$ns_per_100kbp\n\nBUSCO\tC:$(echo $complete_buscos | awk '{printf "%.1f", ($1/$total_buscos)*100}')%[S:$(echo $single_copy_buscos | awk '{printf "%.1f", ($1/$total_buscos)*100}')%,D:$(echo $duplicated_buscos | awk '{printf "%.1f", ($1/$total_buscos)*100}')%],F:$(echo $fragmented_buscos | awk '{printf "%.1f", ($1/$total_buscos)*100}')%,M:$(echo $missing_buscos | awk '{printf "%.1f", ($1/$total_buscos)*100}')%,n:$total_buscos\nComplete and single-copy BUSCOs (S)\t$single_copy_buscos\nComplete and duplicated BUSCOs (D)\t$duplicated_buscos\nFragmented BUSCOs (F)\t$fragmented_buscos\nMissing BUSCOs (M)\t$missing_buscos\nTotal BUSCO groups searched\t$total_buscos\n\nMerqury quality value\t$merqury_score" >> ${prefix}_qc.tsv
 
     """
 }
