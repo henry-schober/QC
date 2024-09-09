@@ -377,6 +377,59 @@ workflow GENOMEASSEMBLY {
             .flatten()
             .map { file -> tuple(id: file.simpleName, file) }
             .set { for_lr_polishing }
+
+    if (params.racon == true){
+        if (params.ONT_lr  == true && params.PacBioHifi_lr == true){
+                pilon_meta
+                    .combine(no_meta_ch_PB)
+                    .set{pilon_align_ch}
+            } else if (params.ONT_lr  == true && params.PacBioHifi_lr == false){
+                pilon_meta
+                    .combine(no_meta_ch_ONT)
+                    .set{pilon_align_ch}
+            } else if (params.ONT_lr  == false && params.PacBioHifi_lr == true){
+                pilon_meta
+                    .combine(no_meta_ch_PB)
+                    .set{pilon_align_ch}
+            }
+
+        if (params.minimap2 == true){
+            MINIMAP2_INDEX(pilon_meta)
+
+            // align reads
+            MINIMAP2_ALIGN(pilon_align_ch, params.bam_format, params.cigar_paf_format, params.cigar_bam)
+            ch_pilon_bam = MINIMAP2_ALIGN.out.bam
+        } else if (params.winnowmap == true){
+            pilon_align_ch
+                .combine(QC_1.out[11])
+                .set{pilon_winnowmap_ch}
+
+            WINNOWMAP(pilon_winnowmap_ch, params.kmer_num)
+
+            SAMTOOLS_SORT(WINNOWMAP.out.sam)
+            ch_pilon_bam = SAMTOOLS_SORT.out.bam 
+
+        } else if (params.shortread == true){
+            BWAMEM2_INDEX(pilon_meta)
+
+            READ_QC2.out[0]
+                .combine(BWAMEM2_INDEX.out.index)
+                .set{bwa}
+
+            BWAMEM2_MEM(bwa, params.samtools_sort)
+            ch_pilon_bam = BWAMEM2_MEM.out.bam
+        }
+
+        SAMTOOLS_INDEX(ch_pilon_bam)
+        ch_sam = SAMTOOLS_INDEX.out.sam
+
+        pilon_meta
+            .join(ch_sam)
+            .set{pilon_assembly_sam_combo}
+
+        assembly_sam_combo
+            .concat(pilon_assembly_sam_combo)
+            .set{assembly_sam_combo} }
     } else {
         ASSEMBLY.out[0].set{for_lr_polishing}
         ch_polish_pilon = Channel.empty()
