@@ -10,14 +10,18 @@ process OUTPUT_COMBINE {
     script: 
     def prefix
     """
-    output_file="\${input_files[0]}"
+    file_array=(\$(ls ${input_files}))
+
+    output_file="\${file_array[0]}"
 
     # Loop through the rest of the files and join them one by one
     for file in "\${input_files[@]:1}"; do
-        output_file=\$(join  -t \$'\\t' "\$output_file" "\$file")
+        tmp_file=\$(mktemp)
+        join "\$output_file" "\$file" > "\$tmp_file"
+        mv "\$tmp_file" "\$output_file"
     done
 
     # Optionally save the final output to a file
-    echo "\$output_file" >> all_assemblyStats.tsv
+    mv "\$output_file" all_assemblyStats.tsv
     """
 }
