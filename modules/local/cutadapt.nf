@@ -11,7 +11,7 @@ process CUTADAPT {
     tuple val(meta), path(reads)
 
     output:
-    path('trim_*'), emit: reads
+    path('*.fastq.gz'), emit: reads
     tuple val(meta), path('*.log')          , emit: log
     path "versions.yml"                     , emit: versions
 
