@@ -15,7 +15,7 @@ process OUTPUT_COMBINE {
     output_file="\${file_array[0]}"
 
     # Loop through the rest of the files and join them one by one
-    for file in "\${input_files[@]:1}"; do
+    for file in "\${file_array[@]:1}"; do
         tmp_file=\$(mktemp)
         join "\$output_file" "\$file" > "\$tmp_file"
         mv "\$tmp_file" "\$output_file"
