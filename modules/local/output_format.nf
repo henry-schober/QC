@@ -54,7 +54,7 @@ echo -e "L50\t\$l50"
 echo -e "L90\t\$l90" 
 echo -e "# N's per 100 kbp\t\$ns_per_100kbp" 
 echo 
-echo -e "BUSCO\tC:\$(echo \$complete_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%[S:\$(echo \$single_copy_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%,D:\$(echo \$duplicated_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%],F:\$(echo \$fragmented_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%,M:\$(echo \$missing_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%,n:\$total_buscos,E:15.5%" 
+echo -e "BUSCO\tC:\$(echo \$complete_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%[S:\$(echo \$single_copy_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%,D:\$(echo \$duplicated_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%],F:\$(echo \$fragmented_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%,M:\$(echo \$missing_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%,n:\$total_buscos" 
 echo -e "Complete and single-copy BUSCOs (S)\t\$single_copy_buscos"
 echo -e "Complete and duplicated BUSCOs (D)\t\$duplicated_buscos"
 echo -e "Fragmented BUSCOs (F)\t\$fragmented_buscos"
