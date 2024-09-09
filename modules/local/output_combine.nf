@@ -18,6 +18,6 @@ process OUTPUT_COMBINE {
     done
 
     # Optionally save the final output to a file
-    echo "\$output_file" > > all_assemblyStats.tsv
+    echo "\$output_file" >> all_assemblyStats.tsv
     """
 }
