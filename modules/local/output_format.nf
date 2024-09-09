@@ -39,28 +39,29 @@ percent_gaps=\$(grep "Percent gaps" "$input_file" | awk '{print \$1}')
 
 merqury_score=\$(sed -n '46p' "$input_file" | awk '{print \$1}')
 
+
 # Output the formatted results
-echo -e "Assembly\t\$assembly" >> ${prefix}_qc.tsv
-echo -e "Number of contigs\t\$contigs" >> ${prefix}_qc.tsv
-echo -e "Largest contig\t\$largest_contig" >> ${prefix}_qc.tsv
-echo -e "Total length\t\$total_length" >> ${prefix}_qc.tsv
-echo -e "GC (%)\t\$gc_percent" >> ${prefix}_qc.tsv
-echo -e "N50\t\$n50" >> ${prefix}_qc.tsv
-echo -e "N90\t\$n90" >> ${prefix}_qc.tsv
-echo -e "auN\t\$aun" >> ${prefix}_qc.tsv
-echo -e "L50\t\$l50" >> ${prefix}_qc.tsv
-echo -e "L90\t\$l90" >> ${prefix}_qc.tsv
-echo -e "# N's per 100 kbp\t\$ns_per_100kbp" >> ${prefix}_qc.tsv
-echo >> ${prefix}_qc.tsv
-echo -e "BUSCO\tC:\$(echo \$complete_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%[S:\$(echo \$single_copy_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%,D:\$(echo \$duplicated_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%],F:\$(echo \$fragmented_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%,M:\$(echo \$missing_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%,n:\$total_buscos,E:15.5%" >> ${prefix}_qc.tsv
-echo -e "Complete BUSCOs (C)\t\$complete_buscos" >> ${prefix}_qc.tsv
-echo -e "Complete and single-copy BUSCOs (S)\t\$single_copy_buscos" >> ${prefix}_qc.tsv
-echo -e "Complete and duplicated BUSCOs (D)\t\$duplicated_buscos" >> ${prefix}_qc.tsv
-echo -e "Fragmented BUSCOs (F)\t\$fragmented_buscos" >> ${prefix}_qc.tsv
-echo -e "Missing BUSCOs (M)\t\$missing_buscos" >> ${prefix}_qc.tsv
-echo -e "Total BUSCO groups searched\t\$total_buscos" >> ${prefix}_qc.tsv
-echo >> ${prefix}_qc.tsv
-echo -e "Merqury quality value\t\$merqury_score" >> ${prefix}_qc.tsv
+{
+echo -e "Assembly\t\$assembly" 
+echo -e "Number of contigs\t\$contigs" 
+echo -e "Largest contig\t\$largest_contig" 
+echo -e "Total length\t\$total_length" 
+echo -e "GC (%)\t\$gc_percent" 
+echo -e "N50\t\$n50" 
+echo -e "N90\t\$n90" 
+echo -e "auN\t\$aun" 
+echo -e "L50\t\$l50" 
+echo -e "L90\t\$l90" 
+echo -e "# N's per 100 kbp\t\$ns_per_100kbp" 
+echo 
+echo -e "BUSCO\tC:\$(echo \$complete_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%[S:\$(echo \$single_copy_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%,D:\$(echo \$duplicated_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%],F:\$(echo \$fragmented_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%,M:\$(echo \$missing_buscos | awk '{printf "%.1f", (\$1/\$total_buscos)*100}')%,n:\$total_buscos,E:15.5%" 
+echo -e "Complete and single-copy BUSCOs (S)\t\$single_copy_buscos"
+echo -e "Complete and duplicated BUSCOs (D)\t\$duplicated_buscos"
+echo -e "Fragmented BUSCOs (F)\t\$fragmented_buscos"
+echo -e "Missing BUSCOs (M)\t\$missing_buscos" 
+echo -e "Total BUSCO groups searched\t\$total_buscos" 
+echo
+echo -e "Merqury quality value\t\$merqury_score" } >> ${prefix}_qc.tsv
 
     """
 }
