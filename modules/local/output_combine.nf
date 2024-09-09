@@ -12,6 +12,11 @@ process OUTPUT_COMBINE {
     """
     file_array=(\$(ls ${input_files}))
 
+    # Sort each file first
+    for file in "\${file_array[@]}"; do
+        sort "\$file" -o "\$file"
+    done
+
     output_file="\${file_array[0]}"
 
     # Loop through the rest of the files and join them one by one
