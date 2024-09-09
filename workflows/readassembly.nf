@@ -678,8 +678,6 @@ workflow GENOMEASSEMBLY {
 
     assembly_stats  = OUTPUT_FORMAT.out.tsv
 
-    assembly_stats.view()
-
     assembly_stats
         .collect(sort: true)
         .set{combo_stats}
