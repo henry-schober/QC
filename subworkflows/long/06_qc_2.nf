@@ -109,19 +109,17 @@ workflow QC_2 {
             ch_align_paf
                 .concat(MINIMAP2_ALIGN.out.paf)
                 .set { paf_alignment } 
-        
-            SAMTOOLS_INDEX (MINIMAP2_ALIGN.out.bam)
-            ch_sam = SAMTOOLS_INDEX.out.sam }
+             }
 
 
-        } else {paf_alignment = Channel.empty()
-                ch_sam = Channel.empty() }
+        } else {paf_alignment = Channel.empty() }
 
     if ( params.longread == true ){
         SAMTOOLS_INDEX (ch_bam)
     } else if ( params.shortread == true ){ 
         SAMTOOLS_INDEX (BWAMEM2_MEM.out.bam) }
 
+        ch_sam = SAMTOOLS_INDEX.out.sam
 
         polished_assemblies
             .combine(ch_meryl)
