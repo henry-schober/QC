@@ -24,8 +24,7 @@ if(ont){
     verkko -d ${prefix} \\
     --hifi $pb \\
     --nano $ont \\
-    --ref $ref \\
-    --slurm
+    --ref $ref
 
     cd ${prefix}
     mv assembly.fasta ${prefix}.fasta
@@ -36,8 +35,7 @@ if(ont){
         """
     verkko -d ${prefix} \\
     --hifi $pb \\
-    --nano $ont \\
-    --slurm
+    --nano $ont
 
     cd ${prefix}
     mv assembly.fasta ${prefix}.fasta
@@ -50,8 +48,7 @@ if(ont){
     """
     verkko -d ${prefix} \\
     --hifi $pb \\
-    --ref $ref \\
-    --slurm
+    --ref $ref
 
     cd ${prefix}
     mv assembly.fasta ${prefix}.fasta
@@ -60,8 +57,7 @@ if(ont){
     """ } else {
     """
     verkko -d ${prefix} \\
-    --hifi $pb \\
-    --slurm
+    --hifi $pb 
 
     cd ${prefix}
     mv assembly.fasta ${prefix}.fasta
