@@ -17,9 +17,9 @@ process VERKKO {
     def VERSION = '4.1.0'
     def prefix = task.ext.prefix ?: "verkko_${meta.id}"
     """
-    verkko -d ${prefix} \
-    --hifi $pb \
-    --nano $ont \
+    verkko -d ${prefix} \\
+    --hifi $pb \\
+    --nano $ont \\
     --slurm
 
     cd ${prefix}
