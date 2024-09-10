@@ -746,7 +746,7 @@ workflow GENOMEASSEMBLY {
 
     output_stats
         .collect()
-        .sort { a, b -> a[0] <=> b[0] } // Sort by the length of the file name (which is the first element of the tuple)
+        .sort { it[0] <=> it[0] } // Sort by the length of the file name (which is the first element of the tuple)
         .set { combo_stats }
 
 
