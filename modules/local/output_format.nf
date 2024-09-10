@@ -75,7 +75,7 @@ I_count=\$(grep "^I:" "hifiasm_dc_trim.chr3_gibbon_pb_T1.fastq.fastq.asm.p_ctg.a
 M_count=\$(grep "^M:" "hifiasm_dc_trim.chr3_gibbon_pb_T1.fastq.fastq.asm.p_ctg.assemblyStats.txt" | awk '{print \$2}')
 N_count=\$(grep "^N:" "hifiasm_dc_trim.chr3_gibbon_pb_T1.fastq.fastq.asm.p_ctg.assemblyStats.txt" | awk '{print \$2}')
 
-merqury_score=\$(sed -n '46p' "$input_file" | awk '{print \$1}')
+merqury_score=\$(sed -n '36p' "$input_file" | awk '{print \$1}')
 
 
 # Output the formatted results
