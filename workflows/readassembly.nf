@@ -378,7 +378,7 @@ workflow GENOMEASSEMBLY {
             .map { file -> tuple(id: file.simpleName, file) }
             .set { for_lr_polishing }
 
-    if (params.racon == true){
+    if (params.racon_polish == true){
         if (params.ONT_lr  == true && params.PacBioHifi_lr == true){
                 pilon_meta
                     .combine(no_meta_ch_PB)
