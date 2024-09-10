@@ -12,7 +12,7 @@ process CUTADAPT {
 
     output:
     
-    path("${prefix}*.fastq.gz"), emit: reads
+    path("${meta.id}*.fastq.gz"), emit: reads
     tuple val(meta), path('*.log')          , emit: log
     path "versions.yml"                     , emit: versions
 
@@ -21,7 +21,7 @@ process CUTADAPT {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = "${meta.id}"
     def trimmed  = meta.single_end ? "-o ${prefix}.fastq.gz" : "-o ${prefix}_1.fastq.gz -p ${prefix}_2.fastq.gz"
     """
     cutadapt \\
