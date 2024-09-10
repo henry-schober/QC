@@ -742,11 +742,13 @@ workflow GENOMEASSEMBLY {
         .map { file -> 
             def fileName = file.getName()
             tuple(fileName.length(), file) }
+        .toSortedList { a, b -> a[0] <=> b[0] }
         .set{output_stats}
 
     output_stats.view()
 
     output_stats
+        .map { file -> file }
         .collect(sort: true)
         .set { combo_stats }
 
