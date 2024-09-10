@@ -739,12 +739,15 @@ workflow GENOMEASSEMBLY {
     assembly_stats  = OUTPUT_FORMAT.out.tsv
 
     assembly_stats
-        .map{file -> tuple(len: file.length(), file) }
+        .map { file -> 
+        def fileName = file.getName()
+        tuple(fileName.length(), file) }
         .set{output_stats}
 
     output_stats
-        .collect(sort: { len.size() })
-        .set{combo_stats}
+        .sort { a, b -> a[0] <=> b[0] } // Sort by the length of the file name (which is the first element of the tuple)
+        .set { combo_stats }
+
 
     OUTPUT_COMBINE(combo_stats)
 
