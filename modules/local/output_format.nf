@@ -60,20 +60,20 @@ l90=\$(grep -m 1 "L90" "$input_file" | awk '{print \$2}')
 ns_per_100kbp=\$(grep -m 1 "# N's per 100 kbp" "$input_file" | awk '{print \$6}')
 
 # Extract the BUSCO values from the input file
-S=\$(grep "^S:" "hifiasm_dc_trim.chr3_gibbon_pb_T1.fastq.fastq.asm.p_ctg.assemblyStats.txt" | awk '{print \$1}' | sed 's/S://; s/,//')
-D=\$(grep "^D:" "hifiasm_dc_trim.chr3_gibbon_pb_T1.fastq.fastq.asm.p_ctg.assemblyStats.txt" | awk '{print \$1}' | sed 's/D://; s/,//')
-F=\$(grep "^F:" "hifiasm_dc_trim.chr3_gibbon_pb_T1.fastq.fastq.asm.p_ctg.assemblyStats.txt" | awk '{print \$1}' | sed 's/F://; s/,//')
-I=\$(grep "^I:" "hifiasm_dc_trim.chr3_gibbon_pb_T1.fastq.fastq.asm.p_ctg.assemblyStats.txt" | awk '{print \$1}' | sed 's/I://; s/,//')
-M=\$(grep "^M:" "hifiasm_dc_trim.chr3_gibbon_pb_T1.fastq.fastq.asm.p_ctg.assemblyStats.txt" | awk '{print \$1}' | sed 's/M://; s/,//')
-N=\$(grep "^N:" "hifiasm_dc_trim.chr3_gibbon_pb_T1.fastq.fastq.asm.p_ctg.assemblyStats.txt" | awk '{print \$1}' | sed 's/N://; s/,//')
+S=\$(grep "^S:" "$input_file" | awk '{print \$1}' | sed 's/S://; s/,//')
+D=\$(grep "^D:" "$input_file" | awk '{print \$1}' | sed 's/D://; s/,//')
+F=\$(grep "^F:" "$input_file" | awk '{print \$1}' | sed 's/F://; s/,//')
+I=\$(grep "^I:" "$input_file" | awk '{print \$1}' | sed 's/I://; s/,//')
+M=\$(grep "^M:" "$input_file" | awk '{print \$1}' | sed 's/M://; s/,//')
+N=\$(grep "^N:" "$input_file" | awk '{print \$1}' | sed 's/N://; s/,//')
 
 # Extract the counts associated with each category
-S_count=\$(grep "^S:" "hifiasm_dc_trim.chr3_gibbon_pb_T1.fastq.fastq.asm.p_ctg.assemblyStats.txt" | awk '{print \$2}')
-D_count=\$(grep "^D:" "hifiasm_dc_trim.chr3_gibbon_pb_T1.fastq.fastq.asm.p_ctg.assemblyStats.txt" | awk '{print \$2}')
-F_count=\$(grep "^F:" "hifiasm_dc_trim.chr3_gibbon_pb_T1.fastq.fastq.asm.p_ctg.assemblyStats.txt" | awk '{print \$2}')
-I_count=\$(grep "^I:" "hifiasm_dc_trim.chr3_gibbon_pb_T1.fastq.fastq.asm.p_ctg.assemblyStats.txt" | awk '{print \$2}')
-M_count=\$(grep "^M:" "hifiasm_dc_trim.chr3_gibbon_pb_T1.fastq.fastq.asm.p_ctg.assemblyStats.txt" | awk '{print \$2}')
-N_count=\$(grep "^N:" "hifiasm_dc_trim.chr3_gibbon_pb_T1.fastq.fastq.asm.p_ctg.assemblyStats.txt" | awk '{print \$2}')
+S_count=\$(grep "^S:" "$input_file" | awk '{print \$2}')
+D_count=\$(grep "^D:" "$input_file" | awk '{print \$2}')
+F_count=\$(grep "^F:" "$input_file" | awk '{print \$2}')
+I_count=\$(grep "^I:" "$input_file" | awk '{print \$2}')
+M_count=\$(grep "^M:" "$input_file" | awk '{print \$2}')
+N_count=\$(grep "^N:" "$input_file" | awk '{print \$2}')
 
 merqury_score=\$(sed -n '36p' "$input_file" | awk '{print \$1}')
 
