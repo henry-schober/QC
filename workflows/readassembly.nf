@@ -740,8 +740,8 @@ workflow GENOMEASSEMBLY {
 
     assembly_stats
         .map { file -> 
-        def fileName = file.getName()
-        tuple(fileName.length(), file) }
+            def fileName = file.getName()
+            tuple(fileName.length(), file) }
         .set{output_stats}
 
     output_stats
