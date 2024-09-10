@@ -10,8 +10,8 @@ process VERKKO {
     tuple val(meta), path(ont), path(pb)
 
     output:
-    path("hybrid_masurca*")                , emit: fasta
-    path ("versions.yml")                , emit: versions
+    path("verkko*/*${meta.id}.fasta")        , emit: fasta
+    path("verkko*/*.gfa")                    , emit: gfa
 
     script:
     def VERSION = '4.1.0'
@@ -22,11 +22,9 @@ process VERKKO {
     --nano $ont \
     --slurm
 
+    cd ${prefix}
     mv assembly.fasta ${prefix}.fasta
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        MaSuRCA: $VERSION
-    END_VERSIONS
+    mv assembly.homopolymer-compressed.gfa ${prefix}_homopolymer-compressed.gfa
+    
     """
 }
