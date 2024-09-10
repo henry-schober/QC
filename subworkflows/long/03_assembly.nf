@@ -6,6 +6,7 @@ include { FLYE } from '../../modules/nf-core/flye/main'
 include { MASURCA } from '../../modules/local/masurca'
 include { CANU } from '../../modules/nf-core/canu/main' 
 include { HIFIASM } from '../../modules/nf-core/hifiasm/main' 
+include { VERKKO } from '../../modules/local/verkko'
 
 
 workflow ASSEMBLY {
@@ -108,6 +109,12 @@ workflow ASSEMBLY {
         }} else {
             h_assembly = Channel.empty() 
             hifi_assembly = Channel.empty() 
+        }
+
+        if (params. verkko == true){
+            println "assembling long reads with verkko!"
+            VERKKO(ont_reads, pacbio_reads)
+            verkko_assembly = VERKKO.out.fasta
         }
 
         if ( params.ex_assembly == true ) {
