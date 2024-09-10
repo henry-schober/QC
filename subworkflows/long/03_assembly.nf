@@ -115,6 +115,13 @@ workflow ASSEMBLY {
             println "assembling long reads with verkko!"
             VERKKO(pacbio_reads, ont_reads, params.ragtag_reference)
             verkko_assembly = VERKKO.out.fasta
+
+            verkko_assembly
+                .map { file -> tuple(id: file.simpleName, file)  }
+                .set { v_assembly }           
+        } else {
+            verkko_assembly = Channel.empty()
+            v_assembly = Channel.empty()
         }
 
         if ( params.ex_assembly == true ) {
