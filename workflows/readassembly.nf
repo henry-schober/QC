@@ -745,15 +745,14 @@ workflow GENOMEASSEMBLY {
         .toSortedList { a, b -> a[0] <=> b[0] }
         .set{output_stats}
 
-    output_stats.view()
-
     output_stats
         .map { it[1] }
         .collect()
         .set { combo_stats }
+        .view()
 
 
-    OUTPUT_COMBINE(combo_stats)
+    //OUTPUT_COMBINE(combo_stats)
 
     //
     // MODULE: MultiQC
