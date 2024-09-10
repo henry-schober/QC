@@ -113,7 +113,7 @@ workflow ASSEMBLY {
 
         if (params. verkko == true){
             println "assembling long reads with verkko!"
-            VERKKO(ont_reads, pacbio_reads)
+            VERKKO(pacbio_reads, ont_reads)
             verkko_assembly = VERKKO.out.fasta
         }
 
