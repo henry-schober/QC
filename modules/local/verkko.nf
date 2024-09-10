@@ -7,7 +7,8 @@ process VERKKO {
         'biocontainers/verkko:2.2--h45dadce_0' }"
         
     input:
-    tuple val(meta), path(ont), path(pb)
+    tuple val(meta), path(ont)
+    tuple val(meta2), path(pb)
 
     output:
     path("verkko*/*${meta.id}.fasta")        , emit: fasta
