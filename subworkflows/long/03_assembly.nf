@@ -113,7 +113,18 @@ workflow ASSEMBLY {
 
         if (params. verkko == true){
             println "assembling long reads with verkko!"
-            VERKKO(pacbio_reads, ont_reads, params.ragtag_reference)
+            if(params.ragtag_reference){
+                if (params.ONT_lr == true && params.PacBioHifi_lr == true){
+                    VERKKO(pacbio_reads, ont_reads, params.ragtag_reference)}
+                else {
+                    VERKKO(pacbio_reads, [], params.ragtag_reference)}
+            } else {
+                if (params.ONT_lr == true && params.PacBioHifi_lr == true){
+                    VERKKO(pacbio_reads, ont_reads, [])}
+                else {
+                    VERKKO(pacbio_reads, [], [])}
+            }
+            
             verkko_assembly = VERKKO.out.fasta
 
             verkko_assembly
