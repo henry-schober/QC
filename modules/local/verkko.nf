@@ -13,7 +13,7 @@ process VERKKO {
 
     output:
     path("verkko*/*${meta.id}.fasta")        , emit: fasta
-    path("verkko*/*.gfa")                    , emit: gfa
+    tuple val(meta), path("verkko*/*.gfa")                    , emit: gfa
 
     script:
     def VERSION = '4.1.0'
