@@ -2,7 +2,7 @@ process OUTPUT_COMBINE {
     label 'process_low'
 
     input:
-    path(input_files)
+    tuple val(length), path(input_files)
 
     output:
     path("all_assemblyStats.tsv")       , emit: assemblyStats
