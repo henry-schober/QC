@@ -743,7 +743,7 @@ workflow GENOMEASSEMBLY {
         .set{output_stats}
 
     output_stats
-        .collect(sort: { length.size() })
+        .collect(sort: { len.size() })
         .set{combo_stats}
 
     OUTPUT_COMBINE(combo_stats)
