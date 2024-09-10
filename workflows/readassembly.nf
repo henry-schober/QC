@@ -59,6 +59,7 @@ include { WINNOWMAP } from '../modules/local/winnowmap'
 include { SAMTOOLS_SORT } from '../modules/nf-core/samtools/sort'
 include { BWAMEM2_INDEX } from '../modules/nf-core/bwamem2/index/main' 
 include { BWAMEM2_MEM } from '../modules/nf-core/bwamem2/mem/main' 
+include { SAMTOOLS_INDEX } from '../modules/nf-core/samtools/index/main' 
 
 // SUBWORKFLOWS
 include { INPUT_CHECK } from '../subworkflows/long/01_input_check'
