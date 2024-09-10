@@ -7,8 +7,9 @@ process VERKKO {
         'biocontainers/verkko:2.2--h45dadce_0' }"
         
     input:
-    tuple val(meta), path(ont)
-    tuple val(meta2), path(pb)
+    tuple val(meta), path(pb)
+    path(ont)
+    path(ref)
 
     output:
     path("verkko*/*${meta.id}.fasta")        , emit: fasta
@@ -17,7 +18,22 @@ process VERKKO {
     script:
     def VERSION = '4.1.0'
     def prefix = task.ext.prefix ?: "verkko_${meta.id}"
+if(ont){
+    if(ref){
     """
+    verkko -d ${prefix} \\
+    --hifi $pb \\
+    --nano $ont \\
+    --ref $ref \\
+    --slurm
+
+    cd ${prefix}
+    mv assembly.fasta ${prefix}.fasta
+    mv assembly.homopolymer-compressed.gfa ${prefix}_homopolymer-compressed.gfa
+    
+    """
+    } else {
+        """
     verkko -d ${prefix} \\
     --hifi $pb \\
     --nano $ont \\
@@ -28,4 +44,31 @@ process VERKKO {
     mv assembly.homopolymer-compressed.gfa ${prefix}_homopolymer-compressed.gfa
     
     """
+    }
+} else {
+    if(ref){
+    """
+    verkko -d ${prefix} \\
+    --hifi $pb \\
+    --ref $ref \\
+    --slurm
+
+    cd ${prefix}
+    mv assembly.fasta ${prefix}.fasta
+    mv assembly.homopolymer-compressed.gfa ${prefix}_homopolymer-compressed.gfa
+    
+    """ } else {
+    """
+    verkko -d ${prefix} \\
+    --hifi $pb \\
+    --slurm
+
+    cd ${prefix}
+    mv assembly.fasta ${prefix}.fasta
+    mv assembly.homopolymer-compressed.gfa ${prefix}_homopolymer-compressed.gfa
+    """
+    }
+}
+
+    
 }
