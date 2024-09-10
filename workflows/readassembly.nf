@@ -739,7 +739,11 @@ workflow GENOMEASSEMBLY {
     assembly_stats  = OUTPUT_FORMAT.out.tsv
 
     assembly_stats
-        .collect(sort: true)
+        .map{file -> tuple(len: file.length(), file) }
+        .set{output_stats}
+
+    output_stats
+        .collect(sort: { length.size() })
         .set{combo_stats}
 
     OUTPUT_COMBINE(combo_stats)
