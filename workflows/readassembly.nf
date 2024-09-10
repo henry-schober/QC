@@ -748,8 +748,8 @@ workflow GENOMEASSEMBLY {
     output_stats.view()
 
     output_stats
-        .map { file -> file }
-        .collect(sort: true)
+        .map { it[1] }
+        .collect()
         .set { combo_stats }
 
 
