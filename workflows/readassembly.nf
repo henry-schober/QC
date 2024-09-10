@@ -746,7 +746,6 @@ workflow GENOMEASSEMBLY {
         .set{output_stats}
 
     output_stats
-        .map { tuple -> tuple[1] }
         .collect()
         .set { combo_stats }
 
