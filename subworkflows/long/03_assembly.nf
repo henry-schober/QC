@@ -19,6 +19,7 @@ workflow ASSEMBLY {
         combined_longreads
         ont_reads
         pacbio_reads
+        ont_reads_w_meta
 
     main:
     ch_versions = Channel.empty() 
@@ -39,10 +40,20 @@ workflow ASSEMBLY {
         //if statement to run assembly and create channels for each resulting assembly
         if ( params.flye == true ) {
             println "assembling long reads with flye!"
-            longreads
-                .combine(genome_size_est)
-                .set{ch_flye_input}
 
+            if (params.flye_mode == 'both') {
+                longreads
+                    .combine(genome_size_est)
+                    .set{ch_flye_input}
+            } else if (params.flye_mode == 'pb'){
+                pacbio_reads
+                    .combine(genome_size_est)
+                    .set{ch_flye_input}
+            } else if (params.flye_mode == 'ont'){
+                ont_reads_w_meta
+                    .combine(genome_size_est)
+                    .set{ch_flye_input}
+            }
             FLYE(ch_flye_input)
             flye_assembly      = FLYE.out.fasta   
 
