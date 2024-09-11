@@ -30,7 +30,7 @@ workflow READ_QC {
             reads
                 .set{filtered_fastq}
             filtered_fastq
-                .map { file -> file }
+                .map { it[1] }
                 .set { fastq_filt }
             }
         else if (params.centrifuge_db != null ){
@@ -57,7 +57,7 @@ workflow READ_QC {
                  reads
                     .set{filtered_fastq}
                  filtered_fastq
-                    .map { file -> file }
+                    .map { it[1] }
                     .set { fastq_filt }
                 centrifuge_out = Channel.empty()
             }
