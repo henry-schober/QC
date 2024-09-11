@@ -9,7 +9,7 @@ process HIFIASM {
 
     input:
     tuple val(meta), path(hifi_reads)
-    path ont
+    tuple val(meta2), path ont
 
 
     output:
