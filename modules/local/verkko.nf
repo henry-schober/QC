@@ -8,7 +8,7 @@ process VERKKO {
         
     input:
     tuple val(meta), path(pb)
-    path(ont)
+    tuple val(meta), path(ont)
     path(ref)
 
     output:
