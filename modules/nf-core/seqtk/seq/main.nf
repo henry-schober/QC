@@ -11,7 +11,7 @@ process SEQTK_SEQ {
     tuple val(meta), path(fastx)
 
     output:
-    path("*.gz")     , emit: fastx
+    tuple val(meta), path("*.gz")     , emit: fastx
     path "versions.yml"               , emit: versions
 
     when:
