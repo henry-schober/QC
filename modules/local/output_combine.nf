@@ -23,12 +23,12 @@ process OUTPUT_COMBINE {
     output_file="\${file_array_2[0]}"
     echo \$file_array_2
 
-    # Loop through the rest of the files and join them one by one
-    #for file in "\${file_array_2[@]:1}"; do
-     #   tmp_file=\$(mktemp)
-     #   join -t \$'\\t' "\$output_file" "\$file" > "\$tmp_file"
-     #   mv "\$tmp_file" "\$output_file"
-    #done
+    Loop through the rest of the files and join them one by one
+    for file in "\${file_array_2[@]:1}"; do
+        tmp_file=\$(mktemp)
+        join -t \$'\\t' "\$output_file" "\$file" > "\$tmp_file"
+        mv "\$tmp_file" "\$output_file"
+    done
 
     # Optionally save the final output to a file
     mv "\$output_file" all_assemblyStats.tsv
