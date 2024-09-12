@@ -12,6 +12,10 @@ process OUTPUT_COMBINE {
     """
     file_array=(\$(ls ${input_files}))
 
+    echo \${file_array} > file_names.txt
+
+    sort -n -k1,1 <(wc -L < file_names.txt)
+
     output_file="\${file_array[0]}"
 
     # Loop through the rest of the files and join them one by one
