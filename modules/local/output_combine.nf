@@ -18,7 +18,7 @@ process OUTPUT_COMBINE {
     paste <(wc -L < file_names.txt) file_names.txt | sort -n -k1,1 | awk '{print \$2}' > sorted_files.txt
 
     # Extract only the filenames from the sorted file
-    file_array_2=(\$(cat ${input_files}))
+    file_array_2=(\$(cat sorted_files.txt))
 
     output_file="\${file_array_2[0]}"
     echo \$file_array_2
