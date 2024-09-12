@@ -26,7 +26,7 @@ process OUTPUT_COMBINE {
 
     output_file="\${file_array_2[0]}"
 
-    Loop through the rest of the files and join them one by one
+    # Loop through the rest of the files and join them one by one
     for file in "\${file_array_2[@]:1}"; do
         tmp_file=\$(mktemp)
         join -t \$'\\t' "\$output_file" "\$file" > "\$tmp_file"
