@@ -14,7 +14,11 @@ process OUTPUT_COMBINE {
 
     ls ${input_files} > file_names.txt
 
-    file_array_2=(\$(sort -n -k1,1 <(wc -L < file_names.txt)))
+    # List the files and their line lengths
+    paste <(wc -L < file_names.txt) file_names.txt | sort -n -k1,1 > sorted_files.txt
+
+    # Extract only the filenames from the sorted file
+    file_array_2=(\$(awk '{print $2}' sorted_files.txt))
 
     output_file="\${file_array_2[0]}"
     echo \$file_array_2
