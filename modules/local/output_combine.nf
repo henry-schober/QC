@@ -25,7 +25,6 @@ process OUTPUT_COMBINE {
     file_array_2=(\$(cat sorted_files.txt))
 
     output_file="\${file_array_2[0]}"
-    echo \$file_array_2
 
     Loop through the rest of the files and join them one by one
     for file in "\${file_array_2[@]:1}"; do
