@@ -10,11 +10,11 @@ process OUTPUT_COMBINE {
     script: 
     def prefix
     """
-    file_array=(\$(ls ${input_files}))
+    file_array_1=(\$(ls ${input_files}))
 
-    echo \${file_array} > file_names.txt
+    echo \${file_array_1} > file_names.txt
 
-    sort -n -k1,1 <(wc -L < file_names.txt)
+    file_array_2=(\$(sort -n -k1,1 <(wc -L < file_names.txt)))
 
     output_file="\${file_array[0]}"
 
