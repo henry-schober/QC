@@ -739,18 +739,8 @@ workflow GENOMEASSEMBLY {
     assembly_stats  = OUTPUT_FORMAT.out.tsv
 
     assembly_stats
-        .map { file -> 
-            def fileName = file.getName()
-            tuple(fileName.length(), file) }
-        .toSortedList { a, b -> a[0] <=> b[0] }
-        .set{output_stats}
-
-    output_stats
-        .map {value, path -> return [path]}
         .collect()
         .set { combo_stats }
-
-    combo_stats.view()
 
     OUTPUT_COMBINE(combo_stats)
 
