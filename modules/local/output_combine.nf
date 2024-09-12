@@ -12,7 +12,7 @@ process OUTPUT_COMBINE {
     """
     file_array_1=(\$(ls ${input_files}))
 
-    echo \${file_array_1} > file_names.txt
+    ls ${input_files} > file_names.txt
 
     file_array_2=(\$(sort -n -k1,1 <(wc -L < file_names.txt)))
 
