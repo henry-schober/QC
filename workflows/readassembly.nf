@@ -740,6 +740,8 @@ workflow GENOMEASSEMBLY {
         .collect()
         .set { combo_stats }
 
+    combo_stats.view()
+
     OUTPUT_COMBINE(combo_stats)
 
     //
