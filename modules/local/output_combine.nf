@@ -16,8 +16,8 @@ process OUTPUT_COMBINE {
 
     # List the files and their line lengths
 
-    awk '{ print length(), \$0 | "sort -n" }' file_names.txt > sorted_files.txt
-    awk '{print \$2}' sorted_files.txt 
+    awk '{ print length(), \$0 | "sort -n" }' file_names.txt > sorted_files_int.txt
+    awk '{print \$2}' sorted_files_int.txt  > sorted_files.txt
 
     ##paste <(wc -L < file_names.txt) file_names.txt | sort -n -k1,1  > sorted_files.txt
 
