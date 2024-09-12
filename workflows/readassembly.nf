@@ -751,7 +751,7 @@ workflow GENOMEASSEMBLY {
 
     combo_stats.view()
 
-    //OUTPUT_COMBINE(combo_stats)
+    OUTPUT_COMBINE(combo_stats)
 
     //
     // MODULE: MultiQC
