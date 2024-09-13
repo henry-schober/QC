@@ -41,15 +41,15 @@ workflow ASSEMBLY {
         if ( params.flye == true ) {
             println "assembling long reads with flye!"
 
-            if (params.flye_mode == 'both') {
+            if (params.flye_mode == both) {
                 longreads
                     .combine(genome_size_est)
                     .set{ch_flye_input}
-            } else if (params.flye_mode == 'pb'){
+            } else if (params.flye_mode == pb){
                 pacbio_reads
                     .combine(genome_size_est)
                     .set{ch_flye_input}
-            } else if (params.flye_mode == 'ont'){
+            } else if (params.flye_mode == ont){
                 ont_reads_w_meta
                     .combine(genome_size_est)
                     .set{ch_flye_input}
