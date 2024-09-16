@@ -35,5 +35,6 @@ process OUTPUT_COMBINE {
 
     # Optionally save the final output to a file
     mv "\$output_file" all_assemblyStats.tsv
+
     """
 }
