@@ -45,25 +45,20 @@ workflow ASSEMBLY {
                 longreads
                     .combine(genome_size_est)
                     .set{ch_flye_input}
-                FLYE(ch_flye_input)
-flye_assembly      = FLYE.out.fasta   
             } else if (params.flye_mode == "pb"){
                 println "assembling pb reads with flye!"
                 pacbio_reads
                     .combine(genome_size_est)
                     .set{ch_flye_input}
-                FLYE(ch_flye_input)
-flye_assembly      = FLYE.out.fasta   
             } else if (params.flye_mode == "ont"){
                 println "assembling ont reads with flye!"
                 ont_reads_w_meta
                     .combine(genome_size_est)
                     .set{ch_flye_input}
-                FLYE(ch_flye_input)
-flye_assembly      = FLYE.out.fasta   
-            } else {flye_assembly = Channel.empty()}
+            } else {ch_flye_input = Channel.empty()}
             
-            
+            FLYE(ch_flye_input)
+            flye_assembly      = FLYE.out.fasta   
             flye_assembly
                 .map { file -> tuple(id: file.simpleName, file)  }
                 .set { f_assembly }      
