@@ -38,6 +38,8 @@ if (params.input) { ch_input = file(params.input) }
 // MODULES
 include { CAT } from '../modules/local/cat' 
 include { OUTPUT } from '../modules/local/output' 
+include { OUTPUT_COMBINE } from '../modules/local/output_combine' 
+include { OUTPUT_FORMAT } from '../modules/local/output_format' 
 include { TOTAL_BASES_SR } from '../modules/local/total_bases_sr' 
 include { TOTAL_BASES_LR } from '../modules/local/total_bases_lr' 
 include { COVERAGE_SR } from '../modules/local/coverage_sr'
@@ -50,6 +52,14 @@ include { FORMAT } from '../modules/local/format_genome_size'
 include { EXTRACT_LR } from '../modules/local/extract_genome_size'
 include { EXTRACT_SR } from '../modules/local/extract_short_genome_size'
 include { EXTRACT_PB } from '../modules/local/extract_pb_genome_size'
+include { PILON } from '../modules/nf-core/pilon' 
+include { MINIMAP2_INDEX } from '../modules/nf-core/minimap2/index/main' 
+include { MINIMAP2_ALIGN } from '../modules/nf-core/minimap2/align/main' 
+include { WINNOWMAP } from '../modules/local/winnowmap'  
+include { SAMTOOLS_SORT } from '../modules/nf-core/samtools/sort'
+include { BWAMEM2_INDEX } from '../modules/nf-core/bwamem2/index/main' 
+include { BWAMEM2_MEM } from '../modules/nf-core/bwamem2/mem/main' 
+include { SAMTOOLS_INDEX } from '../modules/nf-core/samtools/index/main' 
 
 // SUBWORKFLOWS
 include { INPUT_CHECK } from '../subworkflows/long/01_input_check'
@@ -245,12 +255,12 @@ workflow GENOMEASSEMBLY {
     //long read and hybrid assemblies
     if (params.longread == true && params.shortread == true){
         //assembly inputting long & short reads
-        ASSEMBLY (ch_longreads, READ_QC2.out[1], readable_size, full_size, combined_lr, no_meta_fastq, ch_PacBiolongreads)
+        ASSEMBLY (ch_longreads, READ_QC2.out[1], readable_size, full_size, combined_lr, no_meta_ch_ONT, ch_PacBiolongreads, ch_ONTlongreads)
         lr_assemblies   = ASSEMBLY.out[4]
     } else if (params.longread == true && params.shortread == false) {
         ch_shortdata = Channel.empty() 
         //assembly of decontam and length filtered (if specified) long reads
-        ASSEMBLY (ch_longreads, [], readable_size, full_size, combined_lr, no_meta_fastq, ch_PacBiolongreads)
+        ASSEMBLY (ch_longreads, [], readable_size, full_size, combined_lr, no_meta_ch_ONT, ch_PacBiolongreads, ch_ONTlongreads)
         lr_assemblies   = ASSEMBLY.out[4]
     ch_versions = ch_versions.mix(ASSEMBLY.out.versions)   
     } else {
@@ -311,7 +321,7 @@ workflow GENOMEASSEMBLY {
     lr_assemblies
         .concat(sr_assemblies)
         .flatten()
-        .map { file -> tuple(id: file.baseName, file) }
+        .map { file -> tuple(id: file.simpleName, file) }
         .set{all_assemblies}
 
     lr_assemblies
@@ -352,17 +362,92 @@ workflow GENOMEASSEMBLY {
     busco_tsv = QC_1.out[9]
     bam_1 = QC_1.out[1]
 
-
-
     //polish assemblies
+
+    if (params.pilon == true){
+        all_assemblies
+            .join(QC_1.out[1])
+            .set{ch_pilon_1}
+        ch_pilon_1    
+            .join(QC_1.out[0])
+            .set{ch_pilon}
+        println "polishing assemblies with pilon!"
+        PILON(ch_pilon)
+        ch_polish_pilon = PILON.out.improved_assembly
+        ch_polish_pilon
+            .map { file -> tuple(id: file.baseName, file)  }
+            .set { pilon_meta }  
+        ASSEMBLY.out[4]
+            .concat(ch_polish_pilon)
+            .flatten()
+            .map { file -> tuple(id: file.simpleName, file) }
+            .set { for_lr_polishing }
+
+    if (params.racon_polish == true){
+        if (params.ONT_lr  == true && params.PacBioHifi_lr == true){
+                pilon_meta
+                    .combine(no_meta_ch_PB)
+                    .set{pilon_align_ch}
+            } else if (params.ONT_lr  == true && params.PacBioHifi_lr == false){
+                pilon_meta
+                    .combine(no_meta_ch_ONT)
+                    .set{pilon_align_ch}
+            } else if (params.ONT_lr  == false && params.PacBioHifi_lr == true){
+                pilon_meta
+                    .combine(no_meta_ch_PB)
+                    .set{pilon_align_ch}
+            }
+
+        if (params.minimap2 == true){
+            MINIMAP2_INDEX(pilon_meta)
+
+            // align reads
+            MINIMAP2_ALIGN(pilon_align_ch, params.bam_format, params.cigar_paf_format, params.cigar_bam)
+            ch_pilon_bam = MINIMAP2_ALIGN.out.bam
+        } else if (params.winnowmap == true){
+            pilon_align_ch
+                .combine(QC_1.out[11])
+                .set{pilon_winnowmap_ch}
+
+            WINNOWMAP(pilon_winnowmap_ch, params.kmer_num)
+
+            SAMTOOLS_SORT(WINNOWMAP.out.sam)
+            ch_pilon_bam = SAMTOOLS_SORT.out.bam 
+
+        } else if (params.shortread == true){
+            BWAMEM2_INDEX(pilon_meta)
+
+            READ_QC2.out[0]
+                .combine(BWAMEM2_INDEX.out.index)
+                .set{bwa}
+
+            BWAMEM2_MEM(bwa, params.samtools_sort)
+            ch_pilon_bam = BWAMEM2_MEM.out.bam
+        }
+
+        SAMTOOLS_INDEX(ch_pilon_bam)
+        ch_sam = SAMTOOLS_INDEX.out.sam
+
+        pilon_meta
+            .join(ch_sam)
+            .set{pilon_assembly_sam_combo}
+
+        assembly_sam_combo
+            .concat(pilon_assembly_sam_combo)
+            .set{assembly_sam_combo} }
+    } else {
+        ASSEMBLY.out[0].set{for_lr_polishing}
+        ch_polish_pilon = Channel.empty()
+        pilon_meta = Channel.empty()}
+
      if ( params.longread == true) {
         if ( params.medaka_polish == true || params.racon_polish == true){
             if (params.PacBioHifi_lr == true && params.ONT_lr == true){
-                POLISH (ASSEMBLY.out[0], ch_PacBiolongreads, params.model, QC_1.out[8], assembly_sam_combo, no_meta_ch_ONT, no_meta_ch_PB)
+                POLISH (for_lr_polishing, ch_PacBiolongreads, params.model, QC_1.out[8], assembly_sam_combo, no_meta_ch_ONT, no_meta_ch_PB)
             } else if (params.PacBioHifi_lr == false && params.ONT_lr == true){
-                POLISH (ASSEMBLY.out[0], ch_ONTlongreads, params.model, QC_1.out[8], assembly_sam_combo, no_meta_ch_ONT, [])
+                POLISH (for_lr_polishing, ch_ONTlongreads, params.model, QC_1.out[8], assembly_sam_combo, no_meta_ch_ONT, [])
             } else if (params.PacBioHifi_lr == true && params.ONT_lr == false){
-                POLISH (ASSEMBLY.out[0], ch_PacBiolongreads, params.model, QC_1.out[8], assembly_sam_combo, [], no_meta_ch_PB)}
+                POLISH (for_lr_polishing, ch_PacBiolongreads, params.model, QC_1.out[8], assembly_sam_combo, [], no_meta_ch_PB)}
 
         POLISH.out[0] 
             .set{medaka_racon_polish}
@@ -375,14 +460,20 @@ workflow GENOMEASSEMBLY {
     } else {
         medaka_racon_polish = Channel.empty()
     }
+
+
+
     //align assemblies to short reads and polish with POLCA if short reads are available
-    if ( params.longread == true && params.shortread == true) {
+    if ( params.longread == true && params.shortread == true && params.polca == true) {
         if (params.medaka_polish == true || params.racon_polish == true){
             POLISH2 (lr_polish_meta, READ_QC2.out[4])
+        } else if (params.pilon == true){
+            POLISH2 (pilon_meta, READ_QC2.out[4])
         } else {
             POLISH2 (ASSEMBLY.out[0], READ_QC2.out[4])
         }
         POLISH2.out[0]
+            .concat(ch_polish_pilon)
             .set{sr_polish}
 
         sr_polish
@@ -397,37 +488,42 @@ workflow GENOMEASSEMBLY {
             .set { polished_assemblies }
 
     ch_versions = ch_versions.mix(POLISH2.out.versions)
+    } else if (params.pilon == true){
+        sr_polish = Channel.empty()
+        medaka_racon_polish
+            .concat(ch_polish_pilon)
+            .flatten()
+            .map { file -> tuple(id: file.baseName, file) }
+            .set { polished_assemblies }
     } else {
         sr_polish   = Channel.empty()
         medaka_racon_polish
             .flatten()
             .map { file -> tuple(id: file.baseName, file) }
             .set { polished_assemblies }
-
-
     }
-
+    
     all_assemblies_nm
         .concat(medaka_racon_polish, sr_polish)
         .flatten()
         .map { file -> tuple(id: file.baseName, file) }
         .set { polished_assemblies_and_no_polish }    
 
-    if ( params.medaka_polish == true || params.racon_polish == true || params.shortread == true) {
+    if ( params.medaka_polish == true || params.racon_polish == true || params.pilon == true || params.polca == true) {
         if ( params.shortread == true && params.longread == true ) {
             if(params.PacBioHifi_lr == true){
-                QC_2 (polished_assemblies, ch_PacBiolongreads, ch_summtxt, QC_1.out[3], QC_1.out[4], QC_1.out[5], READ_QC2.out[0], QC_1.out[2], full_size, QC_1.out[7], no_meta_ch_PB)
+                QC_2 (polished_assemblies, ch_PacBiolongreads, ch_summtxt, QC_1.out[3], QC_1.out[4], QC_1.out[5], READ_QC2.out[0], QC_1.out[2], full_size, QC_1.out[7], no_meta_ch_PB, QC_1.out[11])
             } else {
-                QC_2 (polished_assemblies, ch_ONTlongreads, ch_summtxt, QC_1.out[3], QC_1.out[4], QC_1.out[5], READ_QC2.out[0], QC_1.out[2], full_size, QC_1.out[7], no_meta_ch_ONT)}
+                QC_2 (polished_assemblies, ch_ONTlongreads, ch_summtxt, QC_1.out[3], QC_1.out[4], QC_1.out[5], READ_QC2.out[0], QC_1.out[2], full_size, QC_1.out[7], no_meta_ch_ONT, QC_1.out[11])}
             ch_versions = ch_versions.mix(QC_2.out.versions)
         } else if ( params.longread == true && params.shortread == false ) {
             if(params.PacBioHifi_lr == true){
-                QC_2 (polished_assemblies, ch_PacBiolongreads, ch_summtxt, QC_1.out[3], QC_1.out[4], QC_1.out[5], [], QC_1.out[2], full_size, QC_1.out[7], no_meta_ch_PB)
+                QC_2 (polished_assemblies, ch_PacBiolongreads, ch_summtxt, QC_1.out[3], QC_1.out[4], QC_1.out[5], [], QC_1.out[2], full_size, QC_1.out[7], no_meta_ch_PB, QC_1.out[11])
             } else {
-                QC_2 (polished_assemblies, ch_ONTlongreads, ch_summtxt, QC_1.out[3], QC_1.out[4], QC_1.out[5], [], QC_1.out[2], full_size, QC_1.out[7], no_meta_ch_ONT)}
+                QC_2 (polished_assemblies, ch_ONTlongreads, ch_summtxt, QC_1.out[3], QC_1.out[4], QC_1.out[5], [], QC_1.out[2], full_size, QC_1.out[7], no_meta_ch_ONT, QC_1.out[11])}
             ch_versions = ch_versions.mix(QC_2.out.versions)
         } else if ( params.shortread == true && params.longread == false ) {
-            QC_2 (polished_assemblies, READ_QC2.out[0], ch_summtxt, QC_1.out[3], QC_1.out[4], QC_1.out[5], READ_QC2.out[0], QC_1.out[2], full_size, QC_1.out[7], [])
+            QC_2 (polished_assemblies, READ_QC2.out[0], ch_summtxt, QC_1.out[3], QC_1.out[4], QC_1.out[5], READ_QC2.out[0], QC_1.out[2], full_size, QC_1.out[7], [], QC_1.out[11])
     } 
     busco_tsv
         .concat(QC_2.out[6]) 
@@ -487,17 +583,17 @@ workflow GENOMEASSEMBLY {
     if ( params.purge == true ) {
         if ( params.shortread == true && params.longread == true) {
             if (params.PacBioHifi_lr == true) {
-                QC_3 (purged_assemblies_common, ch_PacBiolongreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], no_meta_ch_PB)
+                QC_3 (purged_assemblies_common, ch_PacBiolongreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], no_meta_ch_PB, QC_1.out[11])
             } else {
-            QC_3 (purged_assemblies_common, ch_PacBiolongreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], no_meta_ch_ONT)}
+            QC_3 (purged_assemblies_common, ch_PacBiolongreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], no_meta_ch_ONT, QC_1.out[11])}
     ch_versions = ch_versions.mix(QC_3.out.versions)
     } else if ( params.longread == true && params.shortread == false) {
         if(params.PacBioHifi_lr == true){
-            QC_3 (purged_assemblies_common, ch_PacBiolongreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, [], full_size, QC_1.out[7], no_meta_ch_PB)
+            QC_3 (purged_assemblies_common, ch_PacBiolongreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, [], full_size, QC_1.out[7], no_meta_ch_PB, QC_1.out[11])
         } else {
-            QC_3 (purged_assemblies_common, ch_PacBiolongreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, [], full_size, QC_1.out[7], no_meta_ch_ONT)}
+            QC_3 (purged_assemblies_common, ch_PacBiolongreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, [], full_size, QC_1.out[7], no_meta_ch_ONT, QC_1.out[11])}
     } else if ( params.shortread == true && params.longread == false) {
-        QC_3 (purged_assemblies_common, READ_QC2.out[0], ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], [])
+        QC_3 (purged_assemblies_common, READ_QC2.out[0], ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], [], QC_1.out[11])
     } 
     busco_tsv
         .concat(QC_3.out[5]) 
@@ -527,18 +623,18 @@ workflow GENOMEASSEMBLY {
         final_assemblies = SCAFFOLD.out[0]
         if ( params.shortread == true && params.longread == true ) {
             if(params.PacBioHifi_lr == true){
-            QC_4 (SCAFFOLD.out[0], ch_longreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], no_meta_ch_PB)
+            QC_4 (SCAFFOLD.out[0], ch_longreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], no_meta_ch_PB, QC_1.out[11])
             } else {
-            QC_4 (SCAFFOLD.out[0], ch_longreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], no_meta_ch_ONT)}
+            QC_4 (SCAFFOLD.out[0], ch_longreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], no_meta_ch_ONT, QC_1.out[11])}
 
         } else if ( params.longread == true && params.shortread == false ) {
             if(params.PacBioHifi_lr == true){
-            QC_4 (SCAFFOLD.out[0], ch_longreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, [], full_size, QC_1.out[7], no_meta_ch_PB)
+            QC_4 (SCAFFOLD.out[0], ch_longreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, [], full_size, QC_1.out[7], no_meta_ch_PB, QC_1.out[11])
             } else {
-            QC_4 (SCAFFOLD.out[0], ch_longreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, [], full_size, QC_1.out[7], no_meta_ch_ONT)}
+            QC_4 (SCAFFOLD.out[0], ch_longreads, ch_summtxt, qc_quast, qc_busco, qc_merqury, [], full_size, QC_1.out[7], no_meta_ch_ONT, QC_1.out[11])}
 
         } else if ( params.shortread == true && params.longread == false ) {
-            QC_4 (SCAFFOLD.out[0], READ_QC2.out[0], ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], []) }
+            QC_4 (SCAFFOLD.out[0], READ_QC2.out[0], ch_summtxt, qc_quast, qc_busco, qc_merqury, READ_QC2.out[0], full_size, QC_1.out[7], [], QC_1.out[11]) }
 
         busco_tsv
             .concat(QC_4.out[5]) 
@@ -593,14 +689,16 @@ workflow GENOMEASSEMBLY {
         ch_quast = QC_3.out[1]
         ch_busco = QC_3.out[2]
         ch_merqury = QC_3.out[3]
-    } else if (params.medaka_polish == true|| params.racon_polish == true || params.shortread == true) {
+    } else if (params.medaka_polish == true|| params.racon_polish == true || params.polca == true || params.pilon == true) {
         ch_quast = QC_2.out[3]
         ch_busco = QC_2.out[4]
         ch_merqury = QC_2.out[5]
     } else {
+        println "output generating!"
         ch_quast = QC_1.out[3]
         ch_busco = QC_1.out[4]
         ch_merqury = QC_1.out[5]
+
     }
 
     bam_1
@@ -631,7 +729,18 @@ workflow GENOMEASSEMBLY {
         .set{ch_output}
 
     OUTPUT (ch_output)
-    assembly_stats  =   OUTPUT.out.assemblyStats
+
+    OUTPUT_FORMAT(OUTPUT.out.assemblyStats)
+
+    assembly_stats  = OUTPUT_FORMAT.out.tsv
+
+    assembly_stats
+        .collect()
+        .set { combo_stats }
+
+    combo_stats.view()
+
+    OUTPUT_COMBINE(combo_stats)
 
     //
     // MODULE: MultiQC

@@ -13,6 +13,7 @@ process MERYL_COUNT {
 
     output:
     path("*filtered.meryl")           , emit: meryl_db
+    path("*.txt")           , emit: repetitive_k
     path "versions.yml"               , emit: versions
 
     when:
@@ -35,6 +36,9 @@ process MERYL_COUNT {
             threads=$task.cpus \\
             $kmernum \\
             output kmer_db.filtered.meryl kmer_db.meryl
+
+        meryl print greater-than distinct=0.9998 kmer_db.filtered.meryl > repetitive_k${kmer}.txt
+
     done
 
     cat <<-END_VERSIONS > versions.yml

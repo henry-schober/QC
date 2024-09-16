@@ -30,7 +30,7 @@ workflow READ_QC {
             reads
                 .set{filtered_fastq}
             filtered_fastq
-                .map { file -> file }
+                .map { it[1] }
                 .set { fastq_filt }
             }
         else if (params.centrifuge_db != null ){
@@ -47,7 +47,7 @@ workflow READ_QC {
                  fastq_filt           = SEQKIT_GREP.out.filter
 
                  fastq_filt
-                    .map { file -> tuple([id:file.baseName, single_end:true], file)  }
+                    .map { file -> tuple([id:file.simpleName, single_end:true], file)  }
                     .set { filtered_fastq }
 
                  if( params.rcf_db ){
@@ -57,8 +57,9 @@ workflow READ_QC {
                  reads
                     .set{filtered_fastq}
                  filtered_fastq
-                    .map { file -> file }
+                    .map { it[1] }
                     .set { fastq_filt }
+                centrifuge_out = Channel.empty()
             }
         }
 

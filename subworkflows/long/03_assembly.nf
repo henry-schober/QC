@@ -6,6 +6,7 @@ include { FLYE } from '../../modules/nf-core/flye/main'
 include { MASURCA } from '../../modules/local/masurca'
 include { CANU } from '../../modules/nf-core/canu/main' 
 include { HIFIASM } from '../../modules/nf-core/hifiasm/main' 
+include { VERKKO } from '../../modules/local/verkko'
 
 
 workflow ASSEMBLY {
@@ -18,6 +19,7 @@ workflow ASSEMBLY {
         combined_longreads
         ont_reads
         pacbio_reads
+        ont_reads_w_meta
 
     main:
     ch_versions = Channel.empty() 
@@ -37,14 +39,26 @@ workflow ASSEMBLY {
         
         //if statement to run assembly and create channels for each resulting assembly
         if ( params.flye == true ) {
-            println "assembling long reads with flye!"
-            longreads
-                .combine(genome_size_est)
-                .set{ch_flye_input}
-
+            println "Flye mode is: ${params.flye_mode}"
+            if (params.flye_mode == "both") {
+                println "assembling ont and pb reads with flye!"
+                longreads
+                    .combine(genome_size_est)
+                    .set{ch_flye_input}
+            } else if (params.flye_mode == "pb"){
+                println "assembling pb reads with flye!"
+                pacbio_reads
+                    .combine(genome_size_est)
+                    .set{ch_flye_input}
+            } else if (params.flye_mode == "ont"){
+                println "assembling ont reads with flye!"
+                ont_reads_w_meta
+                    .combine(genome_size_est)
+                    .set{ch_flye_input}
+            } else {ch_flye_input = Channel.empty()}
+            
             FLYE(ch_flye_input)
             flye_assembly      = FLYE.out.fasta   
-
             flye_assembly
                 .map { file -> tuple(id: file.simpleName, file)  }
                 .set { f_assembly }      
@@ -108,6 +122,30 @@ workflow ASSEMBLY {
         }} else {
             h_assembly = Channel.empty() 
             hifi_assembly = Channel.empty() 
+        }
+
+        if (params. verkko == true){
+            println "assembling long reads with verkko!"
+            if(params.ragtag_reference){
+                if (params.ONT_lr == true && params.PacBioHifi_lr == true){
+                    VERKKO(pacbio_reads, ont_reads, params.ragtag_reference)}
+                else {
+                    VERKKO(pacbio_reads, [], params.ragtag_reference)}
+            } else {
+                if (params.ONT_lr == true && params.PacBioHifi_lr == true){
+                    VERKKO(pacbio_reads, ont_reads, [])}
+                else {
+                    VERKKO(pacbio_reads, [], [])}
+            }
+            
+            verkko_assembly = VERKKO.out.fasta
+
+            verkko_assembly
+                .map { file -> tuple(id: file.simpleName, file)  }
+                .set { v_assembly }           
+        } else {
+            verkko_assembly = Channel.empty()
+            v_assembly = Channel.empty()
         }
 
         if ( params.ex_assembly == true ) {
