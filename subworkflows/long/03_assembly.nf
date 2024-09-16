@@ -39,27 +39,31 @@ workflow ASSEMBLY {
         
         //if statement to run assembly and create channels for each resulting assembly
         if ( params.flye == true ) {
+            println "Flye mode is: ${params.flye_mode}"
             if (params.flye_mode == "both") {
                 println "assembling ont and pb reads with flye!"
                 longreads
                     .combine(genome_size_est)
                     .set{ch_flye_input}
                 FLYE(ch_flye_input)
+flye_assembly      = FLYE.out.fasta   
             } else if (params.flye_mode == "pb"){
                 println "assembling pb reads with flye!"
                 pacbio_reads
                     .combine(genome_size_est)
                     .set{ch_flye_input}
                 FLYE(ch_flye_input)
+flye_assembly      = FLYE.out.fasta   
             } else if (params.flye_mode == "ont"){
                 println "assembling ont reads with flye!"
                 ont_reads_w_meta
                     .combine(genome_size_est)
                     .set{ch_flye_input}
                 FLYE(ch_flye_input)
-            }
+flye_assembly      = FLYE.out.fasta   
+            } else {flye_assembly = Channel.empty()}
             
-            flye_assembly      = FLYE.out.fasta   
+            
             flye_assembly
                 .map { file -> tuple(id: file.simpleName, file)  }
                 .set { f_assembly }      
