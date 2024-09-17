@@ -21,7 +21,7 @@ process RAGTAG {
     ragtag.py scaffold $reference $fasta -f 1000 -o ragtag_${fasta.baseName}
 
     cd ragtag_${fasta.baseName}
-    mv ragtag.scaffold.fasta ragtag_${fasta.simpleName}.fasta
+    mv ragtag.scaffold.fasta ragtag_${meta.id}.fasta
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
