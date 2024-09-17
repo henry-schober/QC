@@ -244,7 +244,7 @@ workflow GENOMEASSEMBLY {
         COVERAGE_SR (full_size, TOTAL_BASES_SR.out.total_bases_before, TOTAL_BASES_SR.out.total_bases_after)
     }
 
-    if (params.ONT_lr == true && params.PacBioHifi_lr == true) {
+    if (params.ONT_lr == true && params.PacBioHifi_lr == true && params.masurca == true) {
         CAT(ch_combo_longreads)
         CAT.out.cat_longreads
                 .map { file -> tuple(id: file.baseName, file)  }
