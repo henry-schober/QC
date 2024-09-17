@@ -489,7 +489,7 @@ workflow GENOMEASSEMBLY {
 
     ch_versions = ch_versions.mix(POLISH2.out.versions)
     } else if (params.pilon == true){
-        sr_polish = Channel.empty()
+        sr_polish = ch_polish_pilon
         medaka_racon_polish
             .concat(ch_polish_pilon)
             .flatten()
