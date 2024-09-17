@@ -38,6 +38,7 @@ All reads are used for the following steps:
 3. Assembly 
 - [`Flye v2.9`](https://github.com/fenderglass/Flye) 
 - [`Canu v2.2`](https://github.com/marbl/canu)
+- [`Verkko v2.2`](https://github.com/marbl/verkko)
 - [`Hifiasm v0.19.8`](https://github.com/chhylp123/hifiasm) 
 - [`MaSuRCA v4.1.0`](https://github.com/alekseyzimin/masurca) 
 - [`Redundans v2.01`](https://github.com/Gabaldonlab/redundans) 
@@ -46,6 +47,7 @@ All reads are used for the following steps:
 - [`Medaka v1.8.0`](https://github.com/nanoporetech/medaka)
 - [`Racon v1.4.20`](https://github.com/isovic/racon)
 - [`POLCA v4.1.0`](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1007981)
+- [`Pilon v1.23.0`](https://github.com/broadinstitute/pilon)
   
 5. Purge 
 - [`PurgeHaplotigs v1.1.2`](https://bitbucket.org/mroachawri/purge_haplotigs/src/master/)
@@ -55,11 +57,10 @@ All reads are used for the following steps:
 - [`RagTag v2.1.0`](https://github.com/malonge/RagTag)
   
 7. Quality Checking
-- [`BUSCO v5.7.1`](https://busco.ezlab.org/)
+- [`BUSCO v5.7.1`](https://busco.ezlab.org/) or [`Compleasm v0.2.6`](https://github.com/huangnengCSU/compleasm)
 - [`Quast v5.2.0`](https://quast.sourceforge.net/)
 - [`Merqury v1.3`](https://github.com/marbl/merqury)
-- [`PycoQC v4.3.9`](https://github.com/a-slide/pycoQC)
-- [`Minimap2 v2.24`](https://github.com/lh3/minimap2)
+- [`Minimap2 v2.24`](https://github.com/lh3/minimap2) or [`Winnowmap v2.03`](https://github.com/marbl/Winnowmap)
 
 8. Assembly Visualization
 - ([`Blobtools v4.3.9`](https://blobtoolkit.genomehubs.org/blobtools2/))  
