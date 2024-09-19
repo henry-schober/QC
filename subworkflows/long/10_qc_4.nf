@@ -101,10 +101,10 @@ workflow QC_4 {
             }
         }
 
-        if ( params.longread == true ){
-            SAMTOOLS_INDEX (ch_bam)
-        } else if ( params.shortread == true ){ 
-            SAMTOOLS_INDEX (BWAMEM2_MEM.out.bam)}
+        //if ( params.longread == true ){
+        //    SAMTOOLS_INDEX (ch_bam)
+        //} else if ( params.shortread == true ){ 
+        //    SAMTOOLS_INDEX (BWAMEM2_MEM.out.bam)}
 
         assemblies
             .combine(ch_meryl)
