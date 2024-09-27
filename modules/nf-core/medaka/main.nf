@@ -13,7 +13,7 @@ process MEDAKA {
     val model
 
     output:
-    path("medaka/*polish.fasta")              , emit: assembly
+    path("medaka/*.fasta")              , emit: assembly
     path("medaka/versions.yml")            , emit: versions
 
     when:
@@ -31,7 +31,7 @@ process MEDAKA {
         $args
     
     cd medaka
-    mv consensus.fasta medaka_flyepolish.fasta
+    mv consensus.fasta medaka_flye.fasta
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
