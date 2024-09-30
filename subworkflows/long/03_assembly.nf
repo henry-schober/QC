@@ -39,7 +39,6 @@ workflow ASSEMBLY {
         
         //if statement to run assembly and create channels for each resulting assembly
         if ( params.flye == true ) {
-            println "Flye mode is: ${params.flye_mode}"
             if (params.flye_mode == "both") {
                 println "assembling ont and pb reads with flye!"
                 longreads
