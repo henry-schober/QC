@@ -24,8 +24,10 @@ workflow ASSEMBLY {
     main:
     ch_versions = Channel.empty() 
 
+        if (params.ONT_lr_herrocorrected == false || params.PacBioHifi_lr == true) {
         //makes sure long read input is filtered reads
         NANOPLOT (longreads)
+        nanoplot_filtered_out   = NANOPLOT.out.html
 
         TOTAL_BASES_LR(NANOPLOT.out.txt)
 
@@ -33,7 +35,7 @@ workflow ASSEMBLY {
             .combine(genome_size_est_long)
             .set{ch_cov}
 
-        COVERAGE_LR(ch_cov)
+        COVERAGE_LR(ch_cov) } else {nanoplot_filtered_out = Channel.empty()}
 
         assemblies = Channel.empty() 
         
@@ -179,7 +181,7 @@ workflow ASSEMBLY {
     emit:
         all_assemblies  
         longreads   
-        nanoplot_filtered_out   = NANOPLOT.out.html
+        nanoplot_filtered_out  
         f_assembly
         all_assemblies_no_meta
         blob_test
