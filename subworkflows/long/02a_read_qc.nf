@@ -22,7 +22,7 @@ workflow READ_QC {
             TAR(reads)
             reads = TAR.out.untar }
 
-        if (params.ONT_lr_herrocorrected == false) {
+        if ( params.ONT_lr_herrocorrected == false ) {
             NANOPLOT(reads)
             nanoplot_reads_out   = NANOPLOT.out.html
             nanoplot_report_txt  = NANOPLOT.out.txt
