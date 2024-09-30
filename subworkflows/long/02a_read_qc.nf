@@ -22,7 +22,15 @@ workflow READ_QC {
             TAR(reads)
             reads = TAR.out.untar }
 
-        NANOPLOT(reads)
+        if (params.ONT_lr_herrocorrected == false) {
+            NANOPLOT(reads)
+            nanoplot_reads_out   = NANOPLOT.out.html
+            nanoplot_report_txt  = NANOPLOT.out.txt
+        } else {
+            nanoplot_reads_out = Channel.empty()
+            nanoplot_report_txt = Channel.empty()
+        }
+        
 
         if ( params.centrifuge_db == null ){
             ch_db = Channel.empty() 
@@ -70,10 +78,10 @@ workflow READ_QC {
 
     emit:
         filtered_fastq    // channel: [ val(meta), path(decontaminated fastq) ]
-        nanoplot_reads_out   = NANOPLOT.out.html
+        nanoplot_reads_out   
         centrifuge_out 
         gce_genome_size
-        nanoplot_report_txt  = NANOPLOT.out.txt
+        nanoplot_report_txt 
         fastq_filt
         
     versions = ch_versions                     // channel: [ versions.yml ]
