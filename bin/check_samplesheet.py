@@ -29,6 +29,9 @@ class RowChecker:
         ".fastq.gz",
         ".fastq",
         ".tar.gz",
+        ".fa.gz",
+        ".fasta.gz",
+        ".fasta"
     )
 
     def __init__(
