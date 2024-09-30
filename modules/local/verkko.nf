@@ -19,6 +19,8 @@ process VERKKO {
 if(ont){
     if(ref){
     """
+    mkdir cache
+    export XDG_CACHE_HOME=./cache
     verkko -d ${prefix} \\
     --hifi $pb \\
     --nano $ont \\
@@ -32,6 +34,8 @@ if(ont){
     """
     } else {
         """
+    mkdir cache
+    export XDG_CACHE_HOME=./cache
     verkko -d ${prefix} \\
     --hifi $pb \\
     --nano $ont \\
@@ -46,6 +50,8 @@ if(ont){
 } else {
     if(ref){
     """
+    mkdir cache
+    export XDG_CACHE_HOME=./cache
     verkko -d ${prefix} \\
     --hifi $pb \\
     --ref $ref \\
@@ -57,6 +63,8 @@ if(ont){
     
     """ } else {
     """
+    mkdir cache
+    export XDG_CACHE_HOME=./cache
     verkko -d ${prefix} \\
     --hifi $pb \\
     --threads $task.cpus
