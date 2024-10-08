@@ -2,11 +2,11 @@
 def helpMessage() {
 	log.info"""
 	========================================================================================
-        GenomeAssembly- a computational tool for de novo eukaryotic genome assembly
+        QualityCheck - A computational tool for checking assembled or raw genomes 
 	========================================================================================
  	
 	Usage:
-	nextflow run emilytrybulec/genomeassembly -params-file params.yaml
+	nextflow run henry-schober/QC -params-file params.yaml
 	
 	Required arguments:
 		--input				 Path to samplesheet with input (*.csv)
@@ -47,13 +47,13 @@ WorkflowMain.initialise(workflow, params, log)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { GENOMEASSEMBLY as GA } from './workflows/readassembly'
+include { QUALITYCHECK as QC } from './workflows/readassembly'
 
 //
-// WORKFLOW: Run main genomeassembly analysis pipeline
+// WORKFLOW: Run main qualitycheck pipeline
 //
 workflow MAIN {
-    GA ()
+    QC ()
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
