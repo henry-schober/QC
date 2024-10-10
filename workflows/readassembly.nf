@@ -69,7 +69,7 @@ include { SHORT_QC } from 'subworkflows/short_qc/02_short_qc'
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-workflow QUALITYCHECK {
+workflow GENOMEASSEMBLY {
 
     ch_versions = Channel.empty()
 
