@@ -45,13 +45,13 @@ include { BWAMEM2_INDEX } from '../../modules/nf-core/bwamem2/index/main'
 include { BWAMEM2_MEM } from '../../modules/nf-core/bwamem2/mem/main'
 
 // SUBWORKFLOWS
-include { INPUT_CHECK } from '../subworkflows/assembly_qc/01_input_check'
+include { INPUT_CHECK1 } from '../subworkflows/assembly_qc/01_input_check'
 include { ASSEMBLY_QC } from '../subworkflows/assembly_qc/02_assembly_qc'
 
-include { INPUT_CHECK } from '../subworkflows/long_qc/01_input_check'
+include { INPUT_CHECK2 } from '../subworkflows/long_qc/01_input_check'
 include { LONG_QC } from '../subworkflows/long_qc/02_long_qc'
 
-include { INPUT_CHECK } from '../subworkflows/short_qc/01_input_check'
+include { INPUT_CHECK3 } from '../subworkflows/short_qc/01_input_check'
 include { SHORT_QC } from 'subworkflows/short_qc/02_short_qc'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -69,22 +69,22 @@ include { SHORT_QC } from 'subworkflows/short_qc/02_short_qc'
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-workflow QUALITYCHECK {
+workflow GENOMEASSEMBLY {
 
     ch_versions = Channel.empty()
 
-    ch_data = INPUT_CHECK ( ch_input )
-    ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
+    ch_data = INPUT_CHECK1 ( ch_input )
+    ch_versions = ch_versions.mix(INPUT_CHECK1.out.versions)
 
-    def (ch_ont, ch_pb, ch_ill) = INPUT_CHECK.out[0].branch {
+    def (ch_ont, ch_pb, ch_ill) = INPUT_CHECK1.out[0].branch {
         ont: it[0].read_type == 'ont'
         pb:  it[0].read_type == 'pb'
         ill: it[0].read_type == 'ill'
     }
 
     if (params.existing_assembly == true) {
-        ch_data = INPUT_CHECK ( ch_assembly ) 
-        ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
+        ch_data = INPUT_CHECK1 ( ch_assembly ) 
+        ch_versions = ch_versions.mix(INPUT_CHECK1.out.versions)
         ASSEMBLY_QC (ch_data)
         ch_versions = ch_versions.mix(ASSEMBLY_QC.out.versions)
         ch_busco = ASSEMBLY_QC.out.ch_busco
@@ -96,7 +96,10 @@ workflow QUALITYCHECK {
         ch_quast = Channel.empty()
         ch_merqury = Channel.empty()
         ch_busco_full_table = Channel.empty()
-    } }
+    }
+    if (params.long_assembly == true) {
+        ch_data = INPUT_CHECK2 (ch_)
+    }}
     //
     // MODULE: MultiQC
     //
