@@ -47,7 +47,7 @@ WorkflowMain.initialise(workflow, params, log)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { QUALITYCHECK as QC } from './workflows/readassembly'
+include { GENOMEASSEMBLY as QC } from './workflows/readassembly'
 
 //
 // WORKFLOW: Run main qualitycheck pipeline
