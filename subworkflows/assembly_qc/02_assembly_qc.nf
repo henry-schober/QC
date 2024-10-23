@@ -2,6 +2,7 @@ include { QUAST } from '../../modules/local/quast'
 include { BUSCO } from '../../modules/nf-core/busco/main'  
 include { MERQURY } from '../../modules/nf-core/merqury/main'  
 include { COMPLEASM } from '../../modules/local/compleasm'
+include { MERYL_COUNT } from '../../modules/nf-core/meryl/count/main'
 
 workflow ASSEMBLY_QC {
 
