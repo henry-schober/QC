@@ -32,13 +32,15 @@ class RowChecker:
         ".fa.gz",
         ".fasta.gz",
         ".fasta"
+        ".fa"
     )
 
     def __init__(
         self,
         sample_col="sample",
-        first_col="fastq_1",
-        second_col="fastq_2",
+        first_col="fastq1",
+        second_col="fastq2",
+        third_col="fasta",
         single_col="single_end",
         read_type_col="read_type",
         **kwargs,
@@ -49,10 +51,11 @@ class RowChecker:
         Args:
             sample_col (str): The name of the column that contains the sample name
                 (default "sample").
-            first_col (str): The name of the column that contains the first (or only)
-                FASTQ file path (default "fastq_1").
+            first_col (str): The name of the column that contains the first (if any)
+                FASTQ file path (default "fastq1").
             second_col (str): The name of the column that contains the second (if any)
-                FASTQ file path (default "fastq_2").
+                FASTQ file path (default "fastq2").
+            third_col (str): The name of the column that contains the FASTA file path
             single_col (str): The name of the new column that will be inserted and
                 records whether the sample contains single- or paired-end sequencing
                 reads (default "single_end").
@@ -63,6 +66,7 @@ class RowChecker:
         self._sample_col = sample_col
         self._first_col = first_col
         self._second_col = second_col
+        self._third_col = third_col
         self._single_col = single_col
         self._read_type_col = read_type_col
         self._seen = set()
@@ -80,6 +84,7 @@ class RowChecker:
         self._validate_sample(row)
         self._validate_first(row)
         self._validate_second(row)
+        self._validate_third(row)
         self._validate_pair(row)
         self._validate_read_type(row)
         self._seen.add((row[self._sample_col], row[self._first_col]))
@@ -97,11 +102,17 @@ class RowChecker:
         if len(row[self._first_col]) <= 0:
             raise AssertionError("At least the first FASTQ file is required.")
         self._validate_fastq_format(row[self._first_col])
-
+        
     def _validate_second(self, row):
-        """Assert that the second FASTQ entry has the right format if it exists."""
-        if len(row[self._second_col]) > 0:
-            self._validate_fastq_format(row[self._second_col])
+        """Assert that the second FASTQ entry is non-empty and has the right format."""
+        if len(row[self._second_col]) <= 0:
+            raise AssertionError("No second Fastq file has been inserted.")
+        self._validate_fastq_format(row[self._second_col])
+
+    def _validate_third(self, row):
+        """Assert that the FASTA entry has the right format if it exists."""
+        if len(row[self._third_col]) > 0:
+            self._validate_fastq_format(row[self._third_col])
 
     def _validate_pair(self, row):
         """Assert that read pairs have the same file extension. Report pair status."""
@@ -126,7 +137,7 @@ class RowChecker:
                 f"The FASTQ file has an unrecognized extension: {filename}\n"
                 f"It should be one of: {', '.join(self.VALID_FORMATS)}"
             )
-
+            
     def validate_unique_samples(self):
         """
         Assert that the combination of sample name and FASTQ filename is unique.
@@ -193,7 +204,7 @@ def check_samplesheet(file_in, file_out):
         This function checks that the samplesheet follows the following structure,
         see also the `viral recon samplesheet`_::
 
-            sample,fastq_1,fastq_2
+            sample,fastq,fasta
             SAMPLE_PE,SAMPLE_PE_RUN1_1.fastq.gz,SAMPLE_PE_RUN1_2.fastq.gz
             SAMPLE_PE,SAMPLE_PE_RUN2_1.fastq.gz,SAMPLE_PE_RUN2_2.fastq.gz
             SAMPLE_SE,SAMPLE_SE_RUN1_1.fastq.gz,
@@ -202,7 +213,7 @@ def check_samplesheet(file_in, file_out):
         https://raw.githubusercontent.com/nf-core/test-datasets/viralrecon/samplesheet/samplesheet_test_illumina_amplicon.csv
 
     """
-    required_columns = {"sample", "fastq_1", "fastq_2"}
+    required_columns = {"sample", "fastq", "fasta"}
     # See https://docs.python.org/3.9/library/csv.html#id3 to read up on `newline=""`.
     with file_in.open(newline="") as in_handle:
         reader = csv.DictReader(in_handle, dialect=sniff_format(in_handle))

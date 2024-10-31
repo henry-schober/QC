@@ -36,23 +36,17 @@ if (params.input) { ch_input = file(params.input) }
 */
 
 // MODULES
-include { SAMTOOLS_INDEX } from '../../modules/nf-core/samtools/index/main' 
-include { SAMTOOLS_SORT } from '../../modules/nf-core/samtools/sort'
-include { MINIMAP2_INDEX } from '../../modules/nf-core/minimap2/index/main' 
-include { MINIMAP2_ALIGN } from '../../modules/nf-core/minimap2/align/main' 
-include { WINNOWMAP } from '../../modules/local/winnowmap'
-include { BWAMEM2_INDEX } from '../../modules/nf-core/bwamem2/index/main' 
-include { BWAMEM2_MEM } from '../../modules/nf-core/bwamem2/mem/main'
 
 // SUBWORKFLOWS
-include { INPUT_CHECK1 } from '../subworkflows/assembly_qc/01_input_check'
+include { INPUT_CHECK } from '../subworkflows/input_check'
+
+
 include { ASSEMBLY_QC } from '../subworkflows/assembly_qc/02_assembly_qc'
 
-include { INPUT_CHECK2 } from '../subworkflows/long_qc/01_input_check'
-include { LONG_QC } from '../subworkflows/long_qc/02_long_qc'
 
-include { INPUT_CHECK3 } from '../subworkflows/short_qc/01_input_check'
-include { SHORT_QC } from 'subworkflows/short_qc/02_short_qc'
+include { LONG_READ_QC } from '../subworkflows/long_qc/02_read_qc'
+
+include { SHORT_READ_QC } from '../subworkflows/short_qc/02_short_read_qc'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -73,18 +67,18 @@ workflow GENOMEASSEMBLY {
 
     ch_versions = Channel.empty()
 
-    ch_data = INPUT_CHECK1 ( ch_input )
-    ch_versions = ch_versions.mix(INPUT_CHECK1.out.versions)
+    ch_data = INPUT_CHECK ( ch_input )
+    ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
 
-    def (ch_ont, ch_pb, ch_ill) = INPUT_CHECK1.out[0].branch {
+    def (ch_ont, ch_pb, ch_ill) = INPUT_CHECK.out[0].branch {
         ont: it[0].read_type == 'ont'
         pb:  it[0].read_type == 'pb'
         ill: it[0].read_type == 'ill'
     }
 
     if (params.existing_assembly == true) {
-        ch_data = INPUT_CHECK1 ( ch_assembly ) 
-        ch_versions = ch_versions.mix(INPUT_CHECK1.out.versions)
+        ch_data = INPUT_CHECK ( ch_assembly ) 
+        ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
         ASSEMBLY_QC (ch_data)
         ch_versions = ch_versions.mix(ASSEMBLY_QC.out.versions)
         ch_busco = ASSEMBLY_QC.out.ch_busco
@@ -98,7 +92,7 @@ workflow GENOMEASSEMBLY {
         ch_busco_full_table = Channel.empty()
     }
     if (params.long_assembly == true) {
-        ch_data = INPUT_CHECK2 (ch_)
+        ch_data = INPUT_CHECK (ch_)
     }}
     //
     // MODULE: MultiQC

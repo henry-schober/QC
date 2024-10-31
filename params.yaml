@@ -1,5 +1,6 @@
-input                  : # Path to the samplesheet
-shortinput             : 
+input                  : "/home/FCAM/hschober/forked_QC/samplesheet.csv"
+fastq1                 : "/core/projects/EBP/conservation/gen_assembly_pipeline/hoolock/hoolock_chrm_3/chr3_pb.fastq.gz"
+fastq2                 :
 assembly               : "/core/projects/EBP/conservation/gen_assembly_pipeline/hoolock_chrm_3/chrm_3_samplesheet_test/02_assembly/long_read/hifiasm/hifiasm_dc_trim.chr3_gibbon_pb_T1.fastq.fastq.asm.p_ctg.fasta"
 outdir                 : "qc_output"
 summary_txt            : 
@@ -8,3 +9,5 @@ kraken_db              : "/isg/shared/databases/kraken2/microDB"
 rcf_db                 : "/isg/shared/databases/recentrifuge/taxdump/"
 model                  : 
 manual_genome_size     :
+busco_lineage          :
+compleasm_lineage      :
