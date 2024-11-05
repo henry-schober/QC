@@ -69,6 +69,8 @@ workflow GENOMEASSEMBLY {
 
     ch_data = INPUT_CHECK ( ch_input )
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
+    
+    
 
     def (ch_ont, ch_pb, ch_ill) = INPUT_CHECK.out[0].branch {
         ont: it[0].read_type == 'ont'
@@ -77,9 +79,8 @@ workflow GENOMEASSEMBLY {
     }
 
     if (params.existing_assembly == true) {
-        ch_data = INPUT_CHECK ( ch_assembly ) 
-        ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
-        ASSEMBLY_QC (ch_data)
+        ch_assembly = Channel.fromPath(params.assembly)
+        ASSEMBLY_QC (ch_assembly, ch_data)
         ch_versions = ch_versions.mix(ASSEMBLY_QC.out.versions)
         ch_busco = ASSEMBLY_QC.out.ch_busco
         ch_quast = ASSEMBLY_QC.out.ch_quast
@@ -90,10 +91,8 @@ workflow GENOMEASSEMBLY {
         ch_quast = Channel.empty()
         ch_merqury = Channel.empty()
         ch_busco_full_table = Channel.empty()
-    }
-    if (params.long_assembly == true) {
-        ch_data = INPUT_CHECK (ch_)
-    }}
+    } 
+}
     //
     // MODULE: MultiQC
     //

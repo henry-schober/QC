@@ -14,9 +14,7 @@ class WorkflowGenomeassembly {
         genomeExistsError(params, log)
 
 
-        if (!params.fastq) {
-            Nextflow.error "Genome fastq file not specified with e.g. '--fastq genome.fa' or via a detectable config file."
-        }
+        
     }
 
     //
