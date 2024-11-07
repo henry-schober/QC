@@ -31,8 +31,8 @@ class RowChecker:
         ".tar.gz",
         ".fa.gz",
         ".fasta.gz",
-        ".fasta"
-        ".fa"
+        ".fasta",
+        ".fa",
     )
 
     def __init__(
@@ -105,9 +105,8 @@ class RowChecker:
         
     def _validate_second(self, row):
         """Assert that the second FASTQ entry is non-empty and has the right format."""
-        if len(row[self._second_col]) <= 0:
-            raise AssertionError("No second Fastq file has been inserted.")
-        self._validate_fastq_format(row[self._second_col])
+        if len(row[self._second_col]) > 0:
+            self._validate_fastq_format(row[self._second_col])
 
     def _validate_third(self, row):
         """Assert that the FASTA entry has the right format if it exists."""
@@ -213,7 +212,7 @@ def check_samplesheet(file_in, file_out):
         https://raw.githubusercontent.com/nf-core/test-datasets/viralrecon/samplesheet/samplesheet_test_illumina_amplicon.csv
 
     """
-    required_columns = {"sample", "fastq", "fasta"}
+    required_columns = {"sample", "fastq1", "fastq2", "fasta", "single_end", "read_type"}
     # See https://docs.python.org/3.9/library/csv.html#id3 to read up on `newline=""`.
     with file_in.open(newline="") as in_handle:
         reader = csv.DictReader(in_handle, dialect=sniff_format(in_handle))

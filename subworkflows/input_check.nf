@@ -31,6 +31,8 @@ def create_fastq_channel(LinkedHashMap row) {
 
     // add path(s) of the fastq file(s) to the meta map
     def fastq_meta = []
+    def fasta_meta = [ meta, [ file(row.fasta)] ]
+    
 
     // Sanity check: Ensure read_type is present
     if (!row.containsKey('read_type') || !row.read_type) {
@@ -49,4 +51,5 @@ def create_fastq_channel(LinkedHashMap row) {
         fastq_meta = [ meta, [ file(row.fastq_1), file(row.fastq_2) ] ]
     }
     return fastq_meta
+    return fasta_meta
 }

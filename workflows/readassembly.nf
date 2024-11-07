@@ -69,8 +69,7 @@ workflow GENOMEASSEMBLY {
 
     ch_data = INPUT_CHECK ( ch_input )
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
-    
-    
+
 
     def (ch_ont, ch_pb, ch_ill) = INPUT_CHECK.out[0].branch {
         ont: it[0].read_type == 'ont'
@@ -78,9 +77,17 @@ workflow GENOMEASSEMBLY {
         ill: it[0].read_type == 'ill'
     }
 
+    if (ch_ont != null){
+        ch_ont.set{ch_reads}}else if (ch_pb != null){
+        ch_pb.set{ch_reads}}else if (ch_ill != null){
+        ch_ill.set{ch_reads}}
+
     if (params.existing_assembly == true) {
         ch_assembly = Channel.fromPath(params.assembly)
-        ASSEMBLY_QC (ch_assembly, ch_data)
+        ch_assembly.map{ file -> tuple(id: file.baseName, file) }
+            .set {ch_assembly}
+        ch_genome_size = Channel.from(params.manual_genome_size)
+        ASSEMBLY_QC (ch_assembly, ch_reads, ch_genome_size)
         ch_versions = ch_versions.mix(ASSEMBLY_QC.out.versions)
         ch_busco = ASSEMBLY_QC.out.ch_busco
         ch_quast = ASSEMBLY_QC.out.ch_quast
